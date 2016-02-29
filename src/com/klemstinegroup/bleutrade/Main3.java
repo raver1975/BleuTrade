@@ -10,8 +10,6 @@ import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 import edu.princeton.cs.algs4.StdOut;
 import org.hsqldb.Server;
 
-import javax.sound.sampled.LineUnavailableException;
-import javax.swing.*;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.text.DecimalFormat;
@@ -20,9 +18,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-public class Main2 {
+public class Main3 {
 
-    private TradeFrame mainFrame;
     private Server hsqlServer;
     private  Connection conn;
 
@@ -37,12 +34,7 @@ public class Main2 {
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
 
-    public Main2() {
-
-        mainFrame = new TradeFrame();
-        mainFrame.setVisible(true);
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+    public Main3() {
         // ---------------------------------------DATABASE------------------------------------------
         hsqlServer = new Server();
         hsqlServer.setLogWriter(null);
@@ -66,16 +58,6 @@ public class Main2 {
             e.printStackTrace();
         }
         // ---------------------------------------DATABASE------------------------------------------
-
-
-
-
-        try {
-            SoundUtils.tone(1000,100);
-            SoundUtils.tone(2000,100);
-        } catch (LineUnavailableException e) {
-            e.printStackTrace();
-        }
 
 
         //set up coins
@@ -170,8 +152,6 @@ public class Main2 {
 
                     negativeCycles = new ArrayList<>();
                     negativeCycle(hm);
-                    mainFrame.change(negativeCycles);
-
 
                     try {
                         Thread.sleep(60000*10);
@@ -184,7 +164,7 @@ public class Main2 {
     }
 
     public static void main(String[] args) throws Exception {
-        new Main2();
+        new Main3();
 
     }
 
