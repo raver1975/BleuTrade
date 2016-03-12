@@ -34,7 +34,7 @@ public class GrammarParser implements Prototype
     GrammarRuleNode root = null;
 
     /** 
-     * Lots of stuffs to enumerate/analyze the grammar tree, 
+     * Lots of stuffs to enumerate/Analyze the grammar tree,
      * these are needed to generate the predictive parse table.
      */
     // The list of production rules after flattenning the grammar tree

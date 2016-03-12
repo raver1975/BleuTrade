@@ -2,6 +2,7 @@ package com.klemstinegroup.bleutrade;
 
 
 import com.klemstinegroup.bleutrade.json.Currency;
+import com.klemstinegroup.bleutrade.json.HttpKeys;
 import com.klemstinegroup.bleutrade.json.Market;
 import com.klemstinegroup.bleutrade.json.Ticker;
 import org.json.JSONArray;
@@ -41,7 +42,7 @@ public class Http {
             }
             url = url.substring(0, url.length() - 1);
         }
-        System.out.println("opening url=" + url);
+//        System.out.println("opening url=" + url);
         URL website = new URL(url);
         URLConnection connection = website.openConnection();
         BufferedReader in = new BufferedReader(
@@ -56,7 +57,6 @@ public class Http {
 
         in.close();
         String res = response.toString();
-        System.out.println(res);
         return new JSONObject(res);
     }
 
@@ -81,7 +81,6 @@ public class Http {
         sha_HMAC.init(secret_key);
 
         String hash = toHex(sha_HMAC.doFinal(url.getBytes()));
-        System.out.println(hash);
 
         System.out.println("opening url=" + url);
         URL website = new URL(url);
@@ -101,7 +100,6 @@ public class Http {
 
         in.close();
         String res = response.toString();
-        System.out.println(res);
         return new JSONObject(res);
     }
     public static String toHex(byte[] bytes) {
@@ -120,7 +118,6 @@ public class Http {
         boolean success=json.getBoolean("success");
         String message=json.getString("message");
         if (!success)throw new Exception("error!");
-        if (message!=null && !message.isEmpty())System.out.println("message="+message);
 
         JSONArray array=json.getJSONArray("result");
         ArrayList<Currency> arr=new ArrayList<>();
@@ -141,7 +138,6 @@ public class Http {
         boolean success=json.getBoolean("success");
         String message=json.getString("message");
         if (!success)throw new Exception("error!");
-        if (message!=null && !message.isEmpty())System.out.println("message="+message);
 
         JSONArray array=json.getJSONArray("result");
         ArrayList<Market> arr=new ArrayList<>();
@@ -175,7 +171,6 @@ public class Http {
         boolean success=json.getBoolean("success");
         String message=json.getString("message");
         if (!success)throw new Exception("error!");
-        if (message!=null && !message.isEmpty())System.out.println("message="+message);
 
         JSONArray array=json.getJSONArray("result");
         ArrayList<Ticker> arr=new ArrayList<>();

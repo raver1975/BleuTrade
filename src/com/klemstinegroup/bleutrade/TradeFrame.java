@@ -11,9 +11,9 @@ class TradeFrame
         extends JFrame {
     // Instance attributes used in this example
     private JPanel topPanel;
-    private JList listbox;
-    private Vector<String> listData;
-    private JScrollPane scrollPane;
+    protected JList listbox;
+    protected Vector<String> listData;
+    protected JScrollPane scrollPane;
 
 
     // Constructor of main frame
