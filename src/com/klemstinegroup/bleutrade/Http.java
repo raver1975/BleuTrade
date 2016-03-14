@@ -31,7 +31,7 @@ public class Http {
 
     public static JSONObject open(String url, Map<String, String> params) throws Exception {
         url=uri+url;
-        if (params == null) params = new HashMap<>();
+        if (params == null) params = new HashMap<String, String>();
 
         if (params.size()>0) {
 
@@ -62,7 +62,7 @@ public class Http {
 
     public static JSONObject openPrivate(String url, Map<String, String> params) throws Exception {
         url=uri+url;
-        if (params == null) params = new HashMap<>();
+        if (params == null) params = new HashMap<String, String>();
         params.put("apikey",HttpKeys.apikey);
 
         if (params.size()>0) {
@@ -120,7 +120,7 @@ public class Http {
         if (!success)throw new Exception("error!");
 
         JSONArray array=json.getJSONArray("result");
-        ArrayList<Currency> arr=new ArrayList<>();
+        ArrayList<Currency> arr=new ArrayList<Currency>();
         for (int i=0;i<array.length();i++){
             arr.add(Currency.fromJson(array.getJSONObject(i)));
         }
@@ -140,7 +140,7 @@ public class Http {
         if (!success)throw new Exception("error!");
 
         JSONArray array=json.getJSONArray("result");
-        ArrayList<Market> arr=new ArrayList<>();
+        ArrayList<Market> arr=new ArrayList<Market>();
         for (int i=0;i<array.length();i++){
             arr.add(Market.fromJson(array.getJSONObject(i)));
         }
@@ -148,14 +148,14 @@ public class Http {
     }
 
     public static Ticker getTicker(String ticker) throws Exception {
-        ArrayList<String> al=new ArrayList<>();
+        ArrayList<String> al=new ArrayList<String>();
         al.add(ticker);
         return getTickers(al).get(0);
     }
 
     public static ArrayList<Ticker> getTickers(List<String> tickers) throws Exception {
         JSONObject json=null;
-        HashMap<String,String> params=new HashMap<>();
+        HashMap<String,String> params=new HashMap<String, String>();
         if (tickers!=null){
             String s="";
             for (String t:tickers)s+=t+",";
@@ -173,7 +173,7 @@ public class Http {
         if (!success)throw new Exception("error!");
 
         JSONArray array=json.getJSONArray("result");
-        ArrayList<Ticker> arr=new ArrayList<>();
+        ArrayList<Ticker> arr=new ArrayList<Ticker>();
         for (int i=0;i<array.length();i++){
             arr.add(Ticker.fromJson(array.getJSONObject(i)));
         }

@@ -24,11 +24,11 @@ public class Main3 {
     private  Connection conn;
 
     // private final Server hsqlServer;
-    ArrayList<Currency> currencies = new ArrayList<>();
-    HashMap<String, Double> currencyCost = new HashMap<>();
-    ArrayList<Market> markets = new ArrayList<>();
-    private ArrayList<Ticker> tickers = new ArrayList<>();
-    private HashMap<String, Ticker> tickerHM = new HashMap<>();
+    ArrayList<Currency> currencies = new ArrayList<Currency>();
+    HashMap<String, Double> currencyCost = new HashMap<String, Double>();
+    ArrayList<Market> markets = new ArrayList<Market>();
+    private ArrayList<Ticker> tickers = new ArrayList<Ticker>();
+    private HashMap<String, Ticker> tickerHM = new HashMap<String, Ticker>();
     private ArrayList<String> negativeCycles;
     DecimalFormat df = new DecimalFormat("#.########E0");
 
@@ -102,7 +102,7 @@ public class Main3 {
                     markets.clear();
                     markets.addAll(temp3);
 
-                    ArrayList<String> al = new ArrayList<>();
+                    ArrayList<String> al = new ArrayList<String>();
                     for (Market m : markets) {
                         al.add(m.getMarketName());
                     }
@@ -139,7 +139,7 @@ public class Main3 {
 //                    }
 
                     //arbitrage
-                    HashMap<String, Double> hm = new HashMap<>();
+                    HashMap<String, Double> hm = new HashMap<String, Double>();
 
                     for (int i = 0; i < markets.size(); i++) {
                         Market m = markets.get(i);
@@ -150,7 +150,7 @@ public class Main3 {
                         hm.put(g2 + "_" + g1, 1d / tickers.get(i).getAsk());
                     }
 
-                    negativeCycles = new ArrayList<>();
+                    negativeCycles = new ArrayList<String>();
                     negativeCycle(hm);
 
                     try {

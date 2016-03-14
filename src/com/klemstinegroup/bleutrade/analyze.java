@@ -9,28 +9,29 @@ import edu.princeton.cs.algs4.DirectedEdge;
 import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 //import edu.princeton.cs.algs4.StdOut;
 
+import javax.swing.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
 public class Analyze {
-//    private TradeFrame mainFrame;
+    private TradeFrame mainFrame;
 //
 //    private Server hsqlServer;
 //    private  Connection conn;
 
 
-    ArrayList<TickerData> saved = new ArrayList<>();
-    ArrayList<Currency> currencies = new ArrayList<>();
-    HashMap<String, Double> currencyCost = new HashMap<>();
-    ArrayList<Market> markets = new ArrayList<>();
-    private ArrayList<Ticker> tickers = new ArrayList<>();
-    private HashMap<String, Ticker> tickerHM = new HashMap<>();
+    ArrayList<TickerData> saved = new ArrayList<TickerData>();
+    ArrayList<Currency> currencies = new ArrayList<Currency>();
+    HashMap<String, Double> currencyCost = new HashMap<String, Double>();
+    ArrayList<Market> markets = new ArrayList<Market>();
+    private ArrayList<Ticker> tickers = new ArrayList<Ticker>();
+    private HashMap<String, Ticker> tickerHM = new HashMap<String, Ticker>();
     private ArrayList<String> negativeCycles;
 
-    HashMap<String, TickerData> nowhm = new HashMap<>();
-    HashMap<String, TickerData> maxhm = new HashMap<>();
-    HashMap<String, TickerData> minhm = new HashMap<>();
+    HashMap<String, TickerData> nowhm = new HashMap<String, TickerData>();
+    HashMap<String, TickerData> maxhm = new HashMap<String, TickerData>();
+    HashMap<String, TickerData> minhm = new HashMap<String, TickerData>();
 
     DecimalFormat df = new DecimalFormat("000.00");
 
@@ -61,9 +62,9 @@ public class Analyze {
 //        }
         // ---------------------------------------DATABASE------------------------------------------
 
-//        mainFrame = new TradeFrame();
-//        mainFrame.setVisible(true);
-//        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame = new TradeFrame();
+        mainFrame.setVisible(true);
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //set up coins
         ArrayList<Currency> temp1 = null;
         try {
@@ -106,7 +107,7 @@ public class Analyze {
                     markets.clear();
                     markets.addAll(temp3);
 
-                    ArrayList<String> al = new ArrayList<>();
+                    ArrayList<String> al = new ArrayList<String>();
                     for (Market m : markets) {
                         al.add(m.getMarketName());
                     }
@@ -124,7 +125,7 @@ public class Analyze {
                         maxhm.clear();
                         minhm.clear();
                         nowhm.clear();
-                        ArrayList<TickerData> remove = new ArrayList<>();
+                        ArrayList<TickerData> remove = new ArrayList<TickerData>();
 
                         for (TickerData td : remove) saved.remove(td);
                         String g1 = s.substring(0, s.indexOf('_'));
@@ -159,7 +160,7 @@ public class Analyze {
 
 
                     }
-                    negativeCycles = new ArrayList<>();
+                    negativeCycles = new ArrayList<String>();
 
                     for (String g : maxhm.keySet()) {
 //                            System.out.println(g+"\t"+df.format(minhm.get(g))+"\t"+df.format(maxhm.get(g)));
@@ -184,7 +185,7 @@ public class Analyze {
 //                    }
 
                     //arbitrage
-                    HashMap<String, Double> hm = new HashMap<>();
+                    HashMap<String, Double> hm = new HashMap<String, Double>();
 
                     for (int i = 0; i < markets.size(); i++) {
                         Market m = markets.get(i);
@@ -203,7 +204,7 @@ public class Analyze {
                         System.out.println(s);
 
                     }
-//                    mainFrame.change(negativeCycles);
+                    mainFrame.change(negativeCycles);
 
                     System.out.println("-------------------------------------------------------------------------------------------------");
                     System.out.println("time=" + new Date());

@@ -19,7 +19,7 @@ class TradeFrame
     // Constructor of main frame
     public TradeFrame() {
         // Set the frame characteristics
-        setTitle("Advanced List Box Application");
+        setTitle("BleuTrader");
         setSize(300, 100);
         setBackground(Color.gray);
 
