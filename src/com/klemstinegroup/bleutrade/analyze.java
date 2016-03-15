@@ -173,7 +173,7 @@ class Analyze {
 
                         double perc = now / range;
                        // System.out.println("perc="+g+"\t"+perc);
-                        if (perc>=0d&&perc<=1d&&(perc<.1d||perc>.9d)){
+                        if (perc>0d&&perc<1d&&(perc<.1d||perc>.9d)){
                             String s=df.format((perc) * 100d) + "\t" + g+"\t"+minhm.get(g).last+"\t"+nowhm.get(g).last+"\t"+maxhm.get(g).last+"\t"+new Date(minhm.get(g).time)+"\t"+new Date(maxhm.get(g).time);
                             negativeCycles.add(s);
                         }
