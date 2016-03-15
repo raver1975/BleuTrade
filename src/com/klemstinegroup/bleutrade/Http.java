@@ -2,7 +2,7 @@ package com.klemstinegroup.bleutrade;
 
 
 import com.klemstinegroup.bleutrade.json.Currency;
-import com.klemstinegroup.bleutrade.json.HttpKeys;
+import com.klemstinegroup.bleutrade.HttpKeys;
 import com.klemstinegroup.bleutrade.json.Market;
 import com.klemstinegroup.bleutrade.json.Ticker;
 import org.json.JSONArray;

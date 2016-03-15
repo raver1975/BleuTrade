@@ -14,8 +14,8 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
-public class Analyze {
-    private TradeFrame mainFrame;
+class Analyze {
+//    private TradeFrame mainFrame;
 //
 //    private Server hsqlServer;
 //    private  Connection conn;
@@ -62,9 +62,9 @@ public class Analyze {
 //        }
         // ---------------------------------------DATABASE------------------------------------------
 
-        mainFrame = new TradeFrame();
-        mainFrame.setVisible(true);
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        mainFrame = new TradeFrame();
+//        mainFrame.setVisible(true);
+//        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //set up coins
         ArrayList<Currency> temp1 = null;
         try {
@@ -204,7 +204,7 @@ public class Analyze {
                         System.out.println(s);
 
                     }
-                    mainFrame.change(negativeCycles);
+//                    mainFrame.change(negativeCycles);
 
                     System.out.println("-------------------------------------------------------------------------------------------------");
                     System.out.println("time=" + new Date());
