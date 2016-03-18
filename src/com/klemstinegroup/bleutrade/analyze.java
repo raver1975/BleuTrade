@@ -1,6 +1,7 @@
 package com.klemstinegroup.bleutrade;
 
 
+import com.klemstinegroup.bleutrade.json.Balance;
 import com.klemstinegroup.bleutrade.json.Currency;
 import com.klemstinegroup.bleutrade.json.Market;
 import com.klemstinegroup.bleutrade.json.Ticker;
@@ -34,6 +35,7 @@ class Analyze {
     HashMap<String, TickerData> minhm = new HashMap<String, TickerData>();
 
     DecimalFormat df = new DecimalFormat("000.00");
+    DecimalFormat df1 = new DecimalFormat("000.000000000");
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
 
@@ -134,20 +136,21 @@ class Analyze {
                         double bid = t.getBid();
                         double ask = t.getAsk();
                         double last = t.getLast();
-                        String bidS = df.format(new BigDecimal(t.getBid()));
-                        String askS = df.format(new BigDecimal(t.getAsk()));
-                        String lastS = df.format(new BigDecimal(t.getLast()));
+//                        String bidS = df.format(new BigDecimal(t.getBid()));
+//                        String askS = df.format(new BigDecimal(t.getAsk()));
+//                        String lastS = df.format(new BigDecimal(t.getLast()));
 //                       String insert="INSERT INTO ticker(time,coin,base,bid,ask,last) VALUES ("+time+",'"+g1+"','"+g2+"',"+bid+","+ask+","+last+")";
                         saved.add(new TickerData(g1, g2, bid, ask, last, time));
+
                         for (TickerData td : saved) {
                             if (td.time < System.currentTimeMillis() - 86400000) {
                                 remove.add(td);
                             } else {
                                 String bb = td.coin + "-" + td.base;
-                                if (!maxhm.containsKey(bb) || td.last > maxhm.get(bb).last) {
+                                if (!maxhm.containsKey(bb) || td.ask > maxhm.get(bb).ask) {
                                     maxhm.put(bb, td);
                                 }
-                                if (!minhm.containsKey(bb) || td.last < minhm.get(bb).last) {
+                                if (!minhm.containsKey(bb) || td.ask < minhm.get(bb).ask) {
                                     minhm.put(bb, td);
                                 }
                                 if (!nowhm.containsKey(bb) || td.time > nowhm.get(bb).time) {
@@ -164,8 +167,8 @@ class Analyze {
 
                     for (String g : maxhm.keySet()) {
 //                            System.out.println(g+"\t"+df.format(minhm.get(g))+"\t"+df.format(maxhm.get(g)));
-                        double range = maxhm.get(g).last - minhm.get(g).last;
-                        double now = (nowhm.get(g).last - minhm.get(g).last);
+                        double range = maxhm.get(g).ask - minhm.get(g).ask;
+                        double now = (nowhm.get(g).ask - minhm.get(g).ask);
                         //if (range!=0d)System.out.println("range="+g+"\t"+range);
                         if (Math.abs(range) < .000000001d) {
                             continue;
@@ -174,7 +177,7 @@ class Analyze {
                         double perc = now / range;
                        // System.out.println("perc="+g+"\t"+perc);
                         if (perc>0d&&perc<1d&&(perc<.1d||perc>.9d)){
-                            String s=df.format((perc) * 100d) + "\t" + g+"\t"+minhm.get(g).last+"\t"+nowhm.get(g).last+"\t"+maxhm.get(g).last+"\t"+new Date(minhm.get(g).time)+"\t"+new Date(maxhm.get(g).time);
+                            String s=df.format((perc) * 100d) + "\t" + g+"\t"+minhm.get(g).ask+"\t"+nowhm.get(g).ask+"\t"+maxhm.get(g).ask+"\t"+new Date(minhm.get(g).time)+"\t"+new Date(maxhm.get(g).time);
                             negativeCycles.add(s);
                         }
                     }
@@ -204,6 +207,36 @@ class Analyze {
                         System.out.println(s);
 
                     }
+
+                    double bitcoinprice=0;
+                    try {
+                        bitcoinprice=Http.bitcoinPrice();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        ArrayList<Balance> bal=Http.getBalances();
+                        System.out.println("Balances:");
+                        for (Balance b:bal){
+                            if (b.getBalance()>0d) {
+                                System.out.print("  "+b.getCurrency() + "\t" + df1.format(b.getBalance()));
+                                if (b.getCurrency().equals("BTC"))System.out.print("\t"+df1.format(b.getBalance())+"\t$"+df.format(b.getBalance()*bitcoinprice));
+                                for (int i=saved.size()-1;i>-1;i--) {
+                                    TickerData td=saved.get(i);
+                                    if (td.coin.equals(b.getCurrency())&&td.base.equals("BTC")){
+                                        System.out.print("\t"+df1.format(td.last*b.getBalance())+"\t$"+df.format(td.last*b.getBalance()*bitcoinprice));
+                                        break;
+                                    }
+
+                                }
+                                System.out.println();
+                            }
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
 //                    mainFrame.change(negativeCycles);
 
                     System.out.println("-------------------------------------------------------------------------------------------------");

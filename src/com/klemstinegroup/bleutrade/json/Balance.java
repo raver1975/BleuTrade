@@ -2,11 +2,13 @@ package com.klemstinegroup.bleutrade.json;
 
 import javax.annotation.Generated;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.json.JSONObject;
 
 @Generated("org.jsonschema2pojo")
 public class Balance {
@@ -35,6 +37,10 @@ public class Balance {
      */
     public Balance() {
     }
+    public static Balance fromJson(JSONObject json) {
+        return new Gson().fromJson(json.toString(), Balance.class);
+    }
+
 
     /**
      * @param Available

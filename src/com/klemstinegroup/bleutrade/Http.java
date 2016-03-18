@@ -1,6 +1,7 @@
 package com.klemstinegroup.bleutrade;
 
 
+import com.klemstinegroup.bleutrade.json.Balance;
 import com.klemstinegroup.bleutrade.json.Currency;
 import com.klemstinegroup.bleutrade.HttpKeys;
 import com.klemstinegroup.bleutrade.json.Market;
@@ -11,10 +12,14 @@ import org.json.JSONObject;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,20 +34,8 @@ public class Http {
 
     static String uri = "https://bleutrade.com/api/v2";
 
-    public static JSONObject open(String url, Map<String, String> params) throws Exception {
-        url=uri+url;
-        if (params == null) params = new HashMap<String, String>();
-
-        if (params.size()>0) {
-
-            url += "?";
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                url += entry.getKey() + "=" + entry.getValue();
-                url += "&";
-            }
-            url = url.substring(0, url.length() - 1);
-        }
-//        System.out.println("opening url=" + url);
+    public static double bitcoinPrice() throws Exception {
+        String url="https://api.coinbase.com/v2/prices/spot?currency=USD";
         URL website = new URL(url);
         URLConnection connection = website.openConnection();
         BufferedReader in = new BufferedReader(
@@ -57,10 +50,45 @@ public class Http {
 
         in.close();
         String res = response.toString();
+        JSONObject obj=new JSONObject(res);
+        return obj.getJSONObject("data").getDouble("amount");
+
+    }
+
+
+    public static JSONObject open(String url, Map<String, String> params) throws IOException {
+        url=uri+url;
+        if (params == null) params = new HashMap<String, String>();
+
+        if (params.size()>0) {
+
+            url += "?";
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                url += entry.getKey() + "=" + entry.getValue();
+                url += "&";
+            }
+            url = url.substring(0, url.length() - 1);
+        }
+        System.out.println("opening url=" + url);
+        URL website = new URL(url);
+        URLConnection connection = website.openConnection();
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(
+                        connection.getInputStream()));
+
+        StringBuilder response = new StringBuilder();
+        String inputLine;
+
+        while ((inputLine = in.readLine()) != null)
+            response.append(inputLine);
+
+        in.close();
+        String res = response.toString();
+        System.out.println("response="+res);
         return new JSONObject(res);
     }
 
-    public static JSONObject openPrivate(String url, Map<String, String> params) throws Exception {
+    public static JSONObject openPrivate(String url, Map<String, String> params) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         url=uri+url;
         if (params == null) params = new HashMap<String, String>();
         params.put("apikey",HttpKeys.apikey);
@@ -169,7 +197,6 @@ public class Http {
         }
 
         boolean success=json.getBoolean("success");
-        String message=json.getString("message");
         if (!success)throw new Exception("error!");
 
         JSONArray array=json.getJSONArray("result");
@@ -179,5 +206,22 @@ public class Http {
         }
         return arr;
 
+    }
+
+    public static ArrayList<Balance> getBalances() throws Exception {
+        JSONObject json=null;
+        try {
+            json=openPrivate("/account/getbalances",null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        boolean success=json.getBoolean("success");
+        if (!success)throw new Exception("error!");
+        JSONArray array=json.getJSONArray("result");
+        ArrayList<Balance> arr=new ArrayList<Balance>();
+        for (int i=0;i<array.length();i++){
+            arr.add(Balance.fromJson(array.getJSONObject(i)));
+        }
+        return arr;
     }
 }
