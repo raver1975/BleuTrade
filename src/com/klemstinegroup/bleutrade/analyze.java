@@ -11,6 +11,7 @@ import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 //import edu.princeton.cs.algs4.StdOut;
 
 import javax.swing.*;
+import javax.xml.transform.sax.SAXSource;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -67,14 +68,6 @@ class Analyze {
 //        mainFrame = new TradeFrame();
 //        mainFrame.setVisible(true);
 //        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //set up coins
-        ArrayList<Currency> temp1 = null;
-        try {
-            temp1 = Http.getCurrencies();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -85,7 +78,21 @@ class Analyze {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    if (temp1 == null) {
+                        System.out.println("Connection problems?");
+                        int cnt = 60;
+                        try {
+                            while (cnt > 0) {
+                                System.out.print((cnt--) + " ");
+                                    Thread.sleep(1000);
+                            }
+                            System.out.println();
+                            continue;
+                        }
+                        catch(Exception e){
 
+                        }
+                    }
                     ArrayList<Currency> temp = new ArrayList<Currency>();
                     for (Currency c : temp1) {
                         if (c.getIsActive() && !c.getMaintenanceMode()) temp.add(c);
@@ -175,9 +182,9 @@ class Analyze {
                         }
 
                         double perc = now / range;
-                       // System.out.println("perc="+g+"\t"+perc);
-                        if (perc>0d&&perc<1d&&(perc<.1d||perc>.9d)){
-                            String s=df.format((perc) * 100d) + "\t" + g+"\t"+minhm.get(g).ask+"\t"+nowhm.get(g).ask+"\t"+maxhm.get(g).ask+"\t"+new Date(minhm.get(g).time)+"\t"+new Date(maxhm.get(g).time);
+                        // System.out.println("perc="+g+"\t"+perc);
+                        if (perc > 0d && perc < 1d && (perc < .1d || perc > .9d)) {
+                            String s = df.format((perc) * 100d) + "\t" + g + "\t" + minhm.get(g).ask + "\t" + nowhm.get(g).ask + "\t" + maxhm.get(g).ask + "\t" + new Date(minhm.get(g).time) + "\t" + new Date(maxhm.get(g).time);
                             negativeCycles.add(s);
                         }
                     }
@@ -203,28 +210,29 @@ class Analyze {
                     //negativeCycle(hm);
                     Collections.sort(negativeCycles);
                     //Collections.reverse(negativeCycles);
-                    for (String s:negativeCycles){
+                    for (String s : negativeCycles) {
                         System.out.println(s);
 
                     }
 
-                    double bitcoinprice=0;
+                    double bitcoinprice = 0;
                     try {
-                        bitcoinprice=Http.bitcoinPrice();
+                        bitcoinprice = Http.bitcoinPrice();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     try {
-                        ArrayList<Balance> bal=Http.getBalances();
+                        ArrayList<Balance> bal = Http.getBalances();
                         System.out.println("Balances:");
-                        for (Balance b:bal){
-                            if (b.getBalance()>0d) {
-                                System.out.print("  "+b.getCurrency() + "\t" + df1.format(b.getBalance()));
-                                if (b.getCurrency().equals("BTC"))System.out.print("\t"+df1.format(b.getBalance())+"\t$"+df.format(b.getBalance()*bitcoinprice));
-                                for (int i=saved.size()-1;i>-1;i--) {
-                                    TickerData td=saved.get(i);
-                                    if (td.coin.equals(b.getCurrency())&&td.base.equals("BTC")){
-                                        System.out.print("\t"+df1.format(td.last*b.getBalance())+"\t$"+df.format(td.last*b.getBalance()*bitcoinprice));
+                        for (Balance b : bal) {
+                            if (b.getBalance() > 0d) {
+                                System.out.print("  " + b.getCurrency() + "\t" + df1.format(b.getBalance()));
+                                if (b.getCurrency().equals("BTC"))
+                                    System.out.print("\t" + df1.format(b.getBalance()) + "\t$" + df.format(b.getBalance() * bitcoinprice));
+                                for (int i = saved.size() - 1; i > -1; i--) {
+                                    TickerData td = saved.get(i);
+                                    if (td.coin.equals(b.getCurrency()) && td.base.equals("BTC")) {
+                                        System.out.print("\t" + df1.format(td.last * b.getBalance()) + "\t$" + df.format(td.last * b.getBalance() * bitcoinprice));
                                         break;
                                     }
 

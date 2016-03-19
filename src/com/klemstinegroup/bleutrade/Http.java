@@ -84,7 +84,7 @@ public class Http {
 
         in.close();
         String res = response.toString();
-        System.out.println("response="+res);
+       // System.out.println("response="+res);
         return new JSONObject(res);
     }
 
@@ -142,7 +142,7 @@ public class Http {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        if (json==null)return null;
         boolean success=json.getBoolean("success");
         String message=json.getString("message");
         if (!success)throw new Exception("error!");
