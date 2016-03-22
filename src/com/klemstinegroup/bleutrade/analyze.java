@@ -10,9 +10,6 @@ import edu.princeton.cs.algs4.DirectedEdge;
 import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 //import edu.princeton.cs.algs4.StdOut;
 
-import javax.swing.*;
-import javax.xml.transform.sax.SAXSource;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -29,7 +26,7 @@ class Analyze {
     ArrayList<Market> markets = new ArrayList<Market>();
     private ArrayList<Ticker> tickers = new ArrayList<Ticker>();
     private HashMap<String, Ticker> tickerHM = new HashMap<String, Ticker>();
-    private ArrayList<String> negativeCycles;
+//    private ArrayList<String> negativeCycles;
 
     HashMap<String, TickerData> nowhm = new HashMap<String, TickerData>();
     HashMap<String, TickerData> maxhm = new HashMap<String, TickerData>();
@@ -170,7 +167,7 @@ class Analyze {
 
 
                     }
-                    negativeCycles = new ArrayList<String>();
+                    ArrayList<String> negativeCycles1 = new ArrayList<String>();
 
                     for (String g : maxhm.keySet()) {
 //                            System.out.println(g+"\t"+df.format(minhm.get(g))+"\t"+df.format(maxhm.get(g)));
@@ -185,7 +182,7 @@ class Analyze {
                         // System.out.println("perc="+g+"\t"+perc);
                         if (perc > 0d && perc < 1d && (perc < .1d || perc > .9d)) {
                             String s = df.format((perc) * 100d) + "\t" + g + "\t" + minhm.get(g).ask + "\t" + nowhm.get(g).ask + "\t" + maxhm.get(g).ask + "\t" + new Date(minhm.get(g).time) + "\t" + new Date(maxhm.get(g).time);
-                            negativeCycles.add(s);
+                            negativeCycles1.add(s);
                         }
                     }
 //                    try {
@@ -195,6 +192,7 @@ class Analyze {
 //                    }
 
                     //arbitrage
+
                     HashMap<String, Double> hm = new HashMap<String, Double>();
 
                     for (int i = 0; i < markets.size(); i++) {
@@ -206,11 +204,16 @@ class Analyze {
                         hm.put(g2 + "_" + g1, 1d / tickers.get(i).getAsk());
                     }
 
-
-                    //negativeCycle(hm);
+//                    negativeCycles=new ArrayList<String>();
+                    ArrayList<String> negativeCycles = negativeCycle(hm);
                     Collections.sort(negativeCycles);
+                    for (String s:negativeCycles) System.out.println(s);
+
+                    System.out.println("++++++++++++++++++++++++");
+
+                    Collections.sort(negativeCycles1);
                     //Collections.reverse(negativeCycles);
-                    for (String s : negativeCycles) {
+                    for (String s : negativeCycles1) {
                         System.out.println(s);
 
                     }
@@ -269,7 +272,8 @@ class Analyze {
 
     }
 
-    public void negativeCycle(HashMap<String, Double> hm) {
+    public ArrayList<String> negativeCycle(HashMap<String, Double> hm) {
+        ArrayList<String> al=new ArrayList<String>();
         HashSet<String> hs = new HashSet();
         for (String g : hm.keySet()) {
             String g1 = g.substring(0, g.indexOf('_'));
@@ -331,13 +335,14 @@ class Analyze {
             String g = String.format("%06.2f", (stake - 1000d) / 10d);
             list = g + " " + list;
             if (stake > 1000) {
-                negativeCycles.add(list);
+                al.add(list);
                 //System.out.println("cycle: " + list);
             }
             hm.remove(remove1);
             hm.remove(remove2);
-            negativeCycle(hm);
+            al.addAll(negativeCycle(hm));
         }
+        return al;
     }
 
 

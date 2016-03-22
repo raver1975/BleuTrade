@@ -69,7 +69,7 @@ public class Http {
             }
             url = url.substring(0, url.length() - 1);
         }
-        System.out.println("opening url=" + url);
+        System.out.println("opening url=" + (url.length()<80?url:url.substring(0,80)));
         URL website = new URL(url);
         URLConnection connection = website.openConnection();
         BufferedReader in = new BufferedReader(
@@ -110,7 +110,7 @@ public class Http {
 
         String hash = toHex(sha_HMAC.doFinal(url.getBytes()));
 
-        System.out.println("opening url=" + url);
+        System.out.println("opening url=" + (url.length()<80?url:url.substring(0,80)));
         URL website = new URL(url);
 
         URLConnection connection = website.openConnection();
