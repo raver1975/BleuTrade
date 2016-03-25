@@ -226,16 +226,20 @@ class Analyze {
                     }
                     try {
                         ArrayList<Balance> bal = Http.getBalances();
+                        double bittot=0;
                         System.out.println("Balances:");
                         for (Balance b : bal) {
                             if (b.getBalance() > 0d) {
                                 System.out.print("  " + b.getCurrency() + "\t" + df1.format(b.getBalance()));
-                                if (b.getCurrency().equals("BTC"))
+                                if (b.getCurrency().equals("BTC")) {
                                     System.out.print("\t" + df1.format(b.getBalance()) + "\t$" + df.format(b.getBalance() * bitcoinprice));
+                                    bittot+=b.getBalance();
+                                }
                                 for (int i = saved.size() - 1; i > -1; i--) {
                                     TickerData td = saved.get(i);
                                     if (td.coin.equals(b.getCurrency()) && td.base.equals("BTC")) {
                                         System.out.print("\t" + df1.format(td.last * b.getBalance()) + "\t$" + df.format(td.last * b.getBalance() * bitcoinprice));
+                                        bittot+=td.last*b.getBalance();
                                         break;
                                     }
 
@@ -243,6 +247,7 @@ class Analyze {
                                 System.out.println();
                             }
                         }
+                        System.out.println("  TOT" + "\t-------------\t"+df1.format(bittot) + "\t$" + df.format(bittot * bitcoinprice));
 
                     } catch (Exception e) {
                         e.printStackTrace();
