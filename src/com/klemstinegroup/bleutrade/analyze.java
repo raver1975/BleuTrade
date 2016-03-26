@@ -10,6 +10,9 @@ import edu.princeton.cs.algs4.DirectedEdge;
 import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 //import edu.princeton.cs.algs4.StdOut;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -38,6 +41,35 @@ class Analyze {
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
 
     public Analyze() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                while(true) {
+                    try {
+                        String line=br.readLine();
+                        if (line.equals("hello")) System.out.println("Hellooo!");
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        }).start();
+
+        try {
+            saved=Serializer.loadSaved();
+            System.out.println("saved size="+saved.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         // ---------------------------------------DATABASE------------------------------------------
 //        hsqlServer = new Server();
 //        hsqlServer.setLogWriter(null);
@@ -132,8 +164,8 @@ class Analyze {
                         minhm.clear();
                         nowhm.clear();
                         ArrayList<TickerData> remove = new ArrayList<TickerData>();
+//
 
-                        for (TickerData td : remove) saved.remove(td);
                         String g1 = s.substring(0, s.indexOf('_'));
                         String g2 = s.substring(s.indexOf('_') + 1);
                         Ticker t = tickerHM.get(s);
@@ -162,6 +194,7 @@ class Analyze {
                                 }
                             }
                         }
+                        for (TickerData td : remove) saved.remove(td);
 
                         // System.out.println(g+"\t\t"+(now/range));
 
@@ -180,10 +213,10 @@ class Analyze {
 
                         double perc = now / range;
                         // System.out.println("perc="+g+"\t"+perc);
-                        if (perc > 0d && perc < 1d && (perc < .1d || perc > .9d)) {
+//                        if (perc > 0d && perc < 1d && (perc < .1d || perc > .9d)) {
                             String s = df.format((perc) * 100d) + "\t" + g + "\t" + minhm.get(g).ask + "\t" + nowhm.get(g).ask + "\t" + maxhm.get(g).ask + "\t" + new Date(minhm.get(g).time) + "\t" + new Date(maxhm.get(g).time);
                             negativeCycles1.add(s);
-                        }
+//                        }
                     }
 //                    try {
 //                        query("select * from ticker");
@@ -257,6 +290,14 @@ class Analyze {
 
                     System.out.println("-------------------------------------------------------------------------------------------------");
                     System.out.println("time=" + new Date());
+
+                    try {
+                        Serializer.saveSaved(saved);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
                     try {
                         Thread.sleep(60000 * 10);
                     } catch (InterruptedException e) {

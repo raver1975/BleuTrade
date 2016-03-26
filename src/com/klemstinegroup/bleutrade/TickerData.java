@@ -2,12 +2,13 @@ package com.klemstinegroup.bleutrade;
 
 import com.klemstinegroup.bleutrade.json.Ticker;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  * Created by Paul on 3/12/2016.
  */
-public class TickerData {
+public class TickerData implements Serializable{
     //String g1 = s.substring(0, s.indexOf('_'));
     //String g2 = s.substring(s.indexOf('_') + 1);
     //Ticker t=tickerHM.get(s);
