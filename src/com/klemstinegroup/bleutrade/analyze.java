@@ -34,8 +34,8 @@ class Analyze {
     private ArrayList<Balance> balance;
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
-    private static int wait = 60;
-    private static final double profitmargin = 0.01d;
+    private static int wait = 20;
+    private static final double profitmargin = 0.008d;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
     public Order buy(String line) {
@@ -51,7 +51,7 @@ class Analyze {
                 if (mk.getMarketName().equals(market)) {
                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                     double coint = quantity * rate;
-                    if (coint/rate >= mk.getMinTradeSize()) {
+                    if (coint / rate >= mk.getMinTradeSize()) {
                         System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
                         coint += fee;
@@ -164,6 +164,9 @@ class Analyze {
                 while (true) {
                     try {
                         String line = br.readLine();
+                        if (line.equals("exit")) {
+                            System.exit(0);
+                        }
                         if (line.equals(" ")) {
                             refresh = true;
                         }
@@ -364,12 +367,12 @@ class Analyze {
 
                         double perc = now / range;
                         // System.out.println("perc="+g+"\t"+perc);
-                        if (perc > 0.0001d && perc < .05d) {
+                        if (perc > 0.001d && perc < .05d) {
                             String s = dfdollars.format((perc) * 100d) + "\t" + g + "\t" + dfcoins.format(minhm.get(g).ask) + "\t" + dfcoins.format(nowhm.get(g).ask) + "\t" + dfcoins.format(maxhm.get(g).ask) + "\t" + new Date(minhm.get(g).time) + "\t" + new Date(maxhm.get(g).time);
                             negativeCyclesLow.add(s);
 //                            System.out.println(s);
                         }
-                        if (perc > .95d && perc < 1.99999d) {
+                        if (perc > .95d && perc < 1.99995d) {
                             String s = dfdollars.format((perc) * 100d) + "\t" + g + "\t" + dfcoins.format(minhm.get(g).ask) + "\t" + dfcoins.format(nowhm.get(g).ask) + "\t" + dfcoins.format(maxhm.get(g).ask) + "\t" + new Date(minhm.get(g).time) + "\t" + new Date(maxhm.get(g).time);
                             negativeCyclesHigh.add(s);
 //                            System.out.println(s);
@@ -459,28 +462,28 @@ class Analyze {
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                double total = (mk.getMinTradeSize())/rate;
+                                double total = (mk.getMinTradeSize()) / rate;
                                 double fee = total * .0025;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
-                                if (b.getAvailable()/rate < total) {
-                                    System.out.println("3Insufficient Funds="+dfcoins.format(b.getAvailable()/rate)+"\t"+ dfcoins.format(total));
+                                if (b.getAvailable() / rate < total) {
+                                    System.out.println("Insufficient Funds=" + dfcoins.format(b.getAvailable() / rate) + "\t" + dfcoins.format(total));
                                     continue top;
                                 }
 
-                                System.out.println(dfcoins.format(total) +" "+ mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable())+ " " + mk.getBaseCurrency());
+                                System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
 
 //                                if (total >= mk.getMinTradeSize()) {
-                                    Order o = buy("buy " + mk.getMarketName() + " " + dfcoins.format(total));
-                                    if (o != null) {
-                                        if (!o.getExchange().contains("BLEU")) {
-                                            history.add(o);
-                                            try {
-                                                Serializer.saveHistory(history);
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
+                                Order o = buy("buy " + mk.getMarketName() + " " + dfcoins.format(total));
+                                if (o != null) {
+                                    if (!o.getExchange().contains("BLEU")) {
+                                        history.add(o);
+                                        try {
+                                            Serializer.saveHistory(history);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
                                         }
                                     }
+                                }
 //                                }
                             }
                         }
@@ -515,7 +518,7 @@ class Analyze {
                         double hmpr = hmprice.get(h);
                         double pricenow = tickerHM.get(h).getBid() * hmqu;
                         double pricethen = hmpr * hmqu;
-                        double profit = pricenow*.9975 - pricethen*1.0025;
+                        double profit = pricenow * .9975 - pricethen * 1.0025;
 //
                         String g1 = h.substring(0, h.indexOf('_'));
                         String g2 = h.substring(h.indexOf('_') + 1);
@@ -579,16 +582,16 @@ class Analyze {
                     System.out.println("-------------------------------------------------------------------------------------------------");
                     //history cleanup
                     //collect negative ones, total them up
-                    ArrayList<Order> remove=new ArrayList<Order>();
-                   for (Order o:history){
-                       for (Order o1:history){
-                           if (o==o1)continue;
-                           if (o.getPrice()==-o1.getPrice()){
-                               remove.add(o);
-                               remove.add(o1);
-                           }
-                       }
-                   }
+                    ArrayList<Order> remove = new ArrayList<Order>();
+                    for (Order o : history) {
+                        for (Order o1 : history) {
+                            if (o == o1) continue;
+                            if (o.getPrice() == -o1.getPrice()) {
+                                remove.add(o);
+                                remove.add(o1);
+                            }
+                        }
+                    }
                     history.removeAll(remove);
 
 
