@@ -35,7 +35,7 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 20;
-    private static final double profitmargin = 0.008d;
+    private static final double profitmargin = 0.25d;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
     public Order buy(String line) {
@@ -367,7 +367,7 @@ class Analyze {
 
                         double perc = now / range;
                         // System.out.println("perc="+g+"\t"+perc);
-                        if (perc > 0.001d && perc < .05d) {
+                        if (perc > 0.000001d && perc < .05d) {
                             String s = dfdollars.format((perc) * 100d) + "\t" + g + "\t" + dfcoins.format(minhm.get(g).ask) + "\t" + dfcoins.format(nowhm.get(g).ask) + "\t" + dfcoins.format(maxhm.get(g).ask) + "\t" + new Date(minhm.get(g).time) + "\t" + new Date(maxhm.get(g).time);
                             negativeCyclesLow.add(s);
 //                            System.out.println(s);
@@ -461,11 +461,11 @@ class Analyze {
                         top:
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
-                                double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                double total = (mk.getMinTradeSize()) / rate;
+                                double rate = tickerHM.get(mk.getMarketName()).getBid();
+                                double total = (mk.getMinTradeSize()*2d) / rate;
                                 double fee = total * .0025;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
-                                if (b.getAvailable() / rate < total) {
+                                if (b.getAvailable()/rate  < total) {
                                     System.out.println("Insufficient Funds=" + dfcoins.format(b.getAvailable() / rate) + "\t" + dfcoins.format(total));
                                     continue top;
                                 }
@@ -523,10 +523,10 @@ class Analyze {
                         String g1 = h.substring(0, h.indexOf('_'));
                         String g2 = h.substring(h.indexOf('_') + 1);
                         if (!g2.equals("BTC"))
-                            profit *= tickerHM.get(g2 + "_" + "BTC").getBid();
+                            profit *= tickerHM.get(g2 + "_" + "BTC").getAsk();
                         System.out.println(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
                         totprofit += profit;
-                        double total = hmminsize.get(h) * 2d / tickerHM.get(h).getAsk();
+                        double total = hmminsize.get(h) * 2d / tickerHM.get(h).getBid();
                         if (profit * bitcoinprice >= profitmargin && balanceHM.get(g1).getAvailable() > total) {
                             goodtoorder.add(h);
                             Order o = sell("sell " + h + " " + dfcoins.format(total));
@@ -541,7 +541,7 @@ class Analyze {
                     System.out.println("----------------------------");
                     System.out.println("sell high");
                     for (String s : negativeCyclesHigh) {
-                        System.out.println(s);
+
                         String[] split = s.split("\t");
                         String market = split[1];
                         if (market.contains("BLEU")) continue;
@@ -556,6 +556,7 @@ class Analyze {
                                     continue top;
                                 }
                                 if (goodtoorder.contains(market)) {
+                                    System.out.println(s);
                                     System.out.println(dfcoins.format(total) + mk.getMarketCurrency() + " costs :" + dfcoins.format(rate * total) + " " + mk.getBaseCurrencyLong() + "\t" + "have:" + dfcoins.format(b.getAvailable()));
                                     Order o = sell("sell " + mk.getMarketName() + " " + dfcoins.format(total));
                                     o.setQuantity(-o.getQuantity());
