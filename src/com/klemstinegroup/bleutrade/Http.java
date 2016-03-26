@@ -261,7 +261,9 @@ public class Http {
             e.printStackTrace();
         }
         boolean success = json.getBoolean("success");
-        if (!success) throw new Exception(json.getString("message"));
+        if (!success) {
+            throw new Exception(json.getString("message"));
+        }
         JSONObject result = json.getJSONObject("result");
         return result.getLong("orderid");
     }
@@ -279,7 +281,6 @@ public class Http {
         }
         boolean success = json.getBoolean("success");
         if (!success) throw new Exception(json.getString("message"));
-        JSONObject result = json.getJSONObject("result");
         return success;
     }
 }
