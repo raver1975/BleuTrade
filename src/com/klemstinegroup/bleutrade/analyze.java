@@ -369,7 +369,7 @@ class Analyze {
                             negativeCyclesLow.add(s);
 //                            System.out.println(s);
                         }
-                        if (perc > .95d && perc < .99999d) {
+                        if (perc > .95d && perc < 1.99999d) {
                             String s = dfdollars.format((perc) * 100d) + "\t" + g + "\t" + dfcoins.format(minhm.get(g).ask) + "\t" + dfcoins.format(nowhm.get(g).ask) + "\t" + dfcoins.format(maxhm.get(g).ask) + "\t" + new Date(minhm.get(g).time) + "\t" + new Date(maxhm.get(g).time);
                             negativeCyclesHigh.add(s);
 //                            System.out.println(s);
