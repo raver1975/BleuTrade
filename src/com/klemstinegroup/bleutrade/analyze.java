@@ -52,15 +52,15 @@ class Analyze {
                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                     double coint = quantity * rate;
                     if (coint / rate >= mk.getMinTradeSize()) {
-                        System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
+//                        System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
                         coint += fee;
-                        System.out.println("fee = " + dfcoins.format(fee) + " " + mk.getBaseCurrency());
-                        System.out.println("total=" + dfcoins.format(coint) + " " + mk.getBaseCurrency());
+//                        System.out.println("fee = " + dfcoins.format(fee) + " " + mk.getBaseCurrency());
+//                        System.out.println("total=" + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         for (Balance b : balance) {
                             if (b.getCurrency().equals(mk.getBaseCurrency())) {
-                                System.out.println("I have " + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
-                                System.out.println("buying: " + market + "\t" + dfcoins.format(rate) + "\t#" + dfcoins.format(quantity));
+//                                System.out.println("I have " + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
+//                                System.out.println("buying: " + market + "\t" + dfcoins.format(rate) + "\t#" + dfcoins.format(quantity));
                                 try {
                                     final long id = Http.buyselllimit(market, rate, quantity, true);
                                     System.out.println("order number=" + id);
@@ -71,7 +71,7 @@ class Analyze {
                                                     ArrayList<Order> orders = Http.getOrders("OK");
                                                     for (Order o : orders) {
                                                         if (o.getOrderId().equals(id + "")) {
-                                                            System.out.println("order successful!");
+                                                            System.out.println("order successful! "+id);
 //                                                                refresh = true;
                                                             return o;
                                                         }
@@ -552,7 +552,7 @@ class Analyze {
                                 Balance b = balanceHM.get(mk.getMarketCurrency());
                                 double total = mk.getMinTradeSize() * 2d / rate;
                                 if (b.getAvailable() < total) {
-                                    //System.out.println("Insufficient Funds 2"+"\t"+dfcoins.format(total)+" > "+dfcoins.format(b.getAvailable()));
+                                    System.out.println("Insufficient Funds 2"+"\t"+dfcoins.format(total)+" > "+dfcoins.format(b.getAvailable()));
                                     continue top;
                                 }
                                 if (goodtoorder.contains(market)) {
