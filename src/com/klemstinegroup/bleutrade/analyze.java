@@ -622,21 +622,7 @@ class Analyze {
                             }
                             for (Order oo : alpos) history.remove(oo);
                         }
-                    totneg = 0;
-                    totpos = 0;
 
-                    for (Order hh : history) {
-                        if (hh.getQuantity() < 0) {
-                            totneg -= hh.getQuantity();
-                            alneg.add(hh);
-                        } else {
-                            totpos += hh.getQuantity();
-                            alpos.add(hh);
-                        }
-                    }
-
-                    totneg*=-1;
-                    System.out.println("totneg="+totneg+"\t"+"totpos="+totpos);
 
                     try {
                         Serializer.saveHistory(history);
