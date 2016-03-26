@@ -459,16 +459,16 @@ class Analyze {
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                double total = (mk.getMinTradeSize() * 2) / rate;
+                                double total = (mk.getMinTradeSize() * 2);
                                 double fee = total * .0025;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
-                                if (b.getAvailable() < total * rate) {
+                                if (b.getAvailable() < total) {
                                     continue top;
                                 }
 
-                                System.out.println(dfcoins.format(total) + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrencyLong() + "\t" + "have:" + dfcoins.format(b.getAvailable()));
+                                System.out.println(dfcoins.format(total) +" "+ mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable())+ " " + mk.getBaseCurrency());
 
-                                if (total >= mk.getMinTradeSize()) {
+//                                if (total >= mk.getMinTradeSize()) {
                                     Order o = buy("buy " + mk.getMarketName() + " " + dfcoins.format(total));
                                     if (o != null) {
                                         if (!o.getExchange().contains("BLEU")) {
@@ -480,11 +480,9 @@ class Analyze {
                                             }
                                         }
                                     }
-                                }
+//                                }
                             }
                         }
-
-
                     }
 
 
