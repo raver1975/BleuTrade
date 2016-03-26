@@ -35,10 +35,11 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 60;
+    private static final double profitmargin = 0.05d;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
     public Order buy(String line) {
-        line=line.replace("+","");
+        line = line.replace("+", "");
         String[] split = line.split(" ");
 //                            System.out.println(Arrays.toString(split));
         if (split.length != 3) {
@@ -59,32 +60,32 @@ class Analyze {
                         for (Balance b : balance) {
                             if (b.getCurrency().equals(mk.getBaseCurrency())) {
                                 System.out.println("I have " + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
-                                    System.out.println("buying: " + market + "\t" + dfcoins.format(rate) + "\t#" + dfcoins.format(quantity));
-                                    try {
-                                        final long id = Http.buyselllimit(market, rate, quantity, true);
-                                        System.out.println("order number=" + id);
+                                System.out.println("buying: " + market + "\t" + dfcoins.format(rate) + "\t#" + dfcoins.format(quantity));
+                                try {
+                                    final long id = Http.buyselllimit(market, rate, quantity, true);
+                                    System.out.println("order number=" + id);
 
-                                        if (id != -1)
-                                            top:
-                                                    for (int i = 0; i < 60; i++) {
-                                                        ArrayList<Order> orders = Http.getOrders("OK");
-                                                        for (Order o : orders) {
-                                                            if (o.getOrderId().equals(id + "")) {
-                                                                System.out.println("order successful!");
+                                    if (id != -1)
+                                        top:
+                                                for (int i = 0; i < 60; i++) {
+                                                    ArrayList<Order> orders = Http.getOrders("OK");
+                                                    for (Order o : orders) {
+                                                        if (o.getOrderId().equals(id + "")) {
+                                                            System.out.println("order successful!");
 //                                                                refresh = true;
-                                                                return o;
-                                                            }
+                                                            return o;
                                                         }
-                                                        Thread.sleep(1000);
                                                     }
-                                        if (id == -1) return null;
-                                        System.out.println("Canceling order " + id);
-                                        System.out.println("success = " + Http.cancel(id));
+                                                    Thread.sleep(1000);
+                                                }
+                                    if (id == -1) return null;
+                                    System.out.println("Canceling order " + id);
+                                    System.out.println("success = " + Http.cancel(id));
 
 
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
 
                             }
                         }
@@ -98,7 +99,7 @@ class Analyze {
     }
 
     public Order sell(String line) {
-        line=line.replace("+","");
+        line = line.replace("+", "");
         System.out.println(line);
         String[] split = line.split(" ");
 //                            System.out.println(Arrays.toString(split));
@@ -121,28 +122,28 @@ class Analyze {
                         for (Balance b : balance) {
                             if (b.getCurrency().equals(mk.getMarketCurrency())) {
                                 System.out.println("I have " + dfcoins.format(b.getAvailable()) + " " + mk.getMarketCurrency());
-                                    System.out.println("okay, I'm selling these:");
-                                    System.out.println(market + "\t" + dfcoins.format(rate) + "\t#" + dfcoins.format(quantity));
-                                    try {
-                                        final long id = Http.buyselllimit(market, rate, quantity, false);
-                                        System.out.println("order number=" + id);
-                                        if (id != -1)
-                                            top:for (int i = 0; i < 60; i++) {
-                                                ArrayList<Order> orders = Http.getOrders("OK");
-                                                for (Order o : orders) {
-                                                    if (o.getOrderId().equals(id + "")) {
-                                                        System.out.println("order successful!");
+                                System.out.println("okay, I'm selling these:");
+                                System.out.println(market + "\t" + dfcoins.format(rate) + "\t#" + dfcoins.format(quantity));
+                                try {
+                                    final long id = Http.buyselllimit(market, rate, quantity, false);
+                                    System.out.println("order number=" + id);
+                                    if (id != -1)
+                                        top:for (int i = 0; i < 60; i++) {
+                                            ArrayList<Order> orders = Http.getOrders("OK");
+                                            for (Order o : orders) {
+                                                if (o.getOrderId().equals(id + "")) {
+                                                    System.out.println("order successful!");
 //                                                        refresh = true;
-                                                        return o;
-                                                    }
+                                                    return o;
                                                 }
-                                                Thread.sleep(1000);
                                             }
-                                        System.out.println("Cancling order " + id);
-                                        System.out.println("success = " + Http.cancel(id));
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
+                                            Thread.sleep(1000);
+                                        }
+                                    System.out.println("Cancling order " + id);
+                                    System.out.println("success = " + Http.cancel(id));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     } else {
@@ -209,9 +210,9 @@ class Analyze {
             }
             System.out.println("history size=" + history.size());
 
-            ArrayList<Order> remove=new ArrayList<Order>();
-            for (Order o:history){
-                if (o.getExchange().contains("BLEU"))remove.add(o);
+            ArrayList<Order> remove = new ArrayList<Order>();
+            for (Order o : history) {
+                if (o.getExchange().contains("BLEU")) remove.add(o);
             }
             history.removeAll(remove);
             Serializer.saveHistory(history);
@@ -508,7 +509,7 @@ class Analyze {
 
 
                     }
-                    HashSet<String> goodtoorder=new HashSet<String>();
+                    HashSet<String> goodtoorder = new HashSet<String>();
                     double totprofit = 0d;
                     for (String h : hmquantity.keySet()) {
                         double hmqu = hmquantity.get(h);
@@ -523,10 +524,10 @@ class Analyze {
                             profit *= tickerHM.get(g2 + "_" + "BTC").getBid();
                         System.out.println(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
                         totprofit += profit;
-                        double total=hmminsize.get(h)*2d/tickerHM.get(h).getAsk();
-                        if (profit * bitcoinprice >= 0.01d&&balanceHM.get(g2).getAvailable()>total) {
+                        double total = hmminsize.get(h) * 2d / tickerHM.get(h).getAsk();
+                        if (profit * bitcoinprice >= profitmargin && balanceHM.get(g2).getAvailable() > total) {
                             goodtoorder.add(h);
-                            Order o=sell("sell " + h + " " + dfcoins.format(total));
+                            Order o = sell("sell " + h + " " + dfcoins.format(total));
                             o.setQuantity(-o.getQuantity());
                             history.add(o);
                         }
@@ -541,24 +542,24 @@ class Analyze {
                         System.out.println(s);
                         String[] split = s.split("\t");
                         String market = split[1];
-                        if (market.contains("BLEU"))continue;
+                        if (market.contains("BLEU")) continue;
                         top:
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getMarketCurrency());
-                                double total = mk.getMinTradeSize()*2d/rate;
+                                double total = mk.getMinTradeSize() * 2d / rate;
                                 if (b.getAvailable() < total) {
-                                    System.out.println("Insufficient Funds 2"+"\t"+dfcoins.format(total)+" > "+dfcoins.format(b.getAvailable()));
+                                    //System.out.println("Insufficient Funds 2"+"\t"+dfcoins.format(total)+" > "+dfcoins.format(b.getAvailable()));
                                     continue top;
                                 }
-                                if (goodtoorder.contains(market)){
+                                if (goodtoorder.contains(market)) {
                                     System.out.println(dfcoins.format(total) + mk.getMarketCurrency() + " costs :" + dfcoins.format(rate * total) + " " + mk.getBaseCurrencyLong() + "\t" + "have:" + dfcoins.format(b.getAvailable()));
-                                    Order o=sell("sell " + mk.getMarketName() + " " + dfcoins.format(total));
+                                    Order o = sell("sell " + mk.getMarketName() + " " + dfcoins.format(total));
                                     o.setQuantity(-o.getQuantity());
                                     history.add(o);
                                 }
-                                else System.out.println("Not profitable to sell");
+                                //else System.out.println("Not profitable to sell");
                             }
                         }
                     }
@@ -577,7 +578,73 @@ class Analyze {
 
 
                     System.out.println("-------------------------------------------------------------------------------------------------");
+                    //history cleanup
+                    //collect negative ones, total them up
+                    double totneg = 0;
+                    double totpos = 0;
+                    ArrayList<Order> alneg = new ArrayList<Order>();
+                    ArrayList<Order> alpos = new ArrayList<Order>();
+                        totneg = 0;
+                        totpos = 0;
 
+                        for (Order hh : history) {
+                            if (hh.getQuantity() < 0) {
+                                totneg += hh.getQuantity();
+                                alneg.add(hh);
+                            } else {
+                                totpos += hh.getQuantity();
+                                alpos.add(hh);
+                            }
+                        }
+                        totneg*=-1;
+
+                        if (totpos > totneg) {
+                            double dist = totpos - totneg;
+                            Collections.reverse(alpos);
+                            int t = 0;
+                            for (Order o : alpos) {
+                                t += o.getQuantity();
+                                if (t <= dist) {
+                                    history.remove(o);
+                                    System.out.println("removing "+o);
+                                }
+                            }
+                            for (Order oo : alneg) history.remove(oo);
+                        }
+                        else{
+                            double dist = totpos-totneg;
+                            Collections.reverse(alneg);
+                            int t = 0;
+                            for (Order o : alneg) {
+                                t += o.getQuantity();
+                                if (t >=dist) {
+                                    history.remove(o);
+                                    System.out.println("remOving "+o);
+                                }
+                            }
+                            for (Order oo : alpos) history.remove(oo);
+                        }
+                    totneg = 0;
+                    totpos = 0;
+
+                    for (Order hh : history) {
+                        if (hh.getQuantity() < 0) {
+                            totneg -= hh.getQuantity();
+                            alneg.add(hh);
+                        } else {
+                            totpos += hh.getQuantity();
+                            alpos.add(hh);
+                        }
+                    }
+
+                    totneg*=-1;
+                    System.out.println("totneg="+totneg+"\t"+"totpos="+totpos);
+
+                    try {
+                        Serializer.saveHistory(history);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     try {
                         Serializer.saveSaved(saved);
