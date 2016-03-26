@@ -473,6 +473,7 @@ class Analyze {
 
                     }
                     HashSet<String> goodtoorder = new HashSet<String>();
+                    HashSet<String> donotsell = new HashSet<String>();
                     HashSet<String> donotbuy = new HashSet<String>();
                     double totprofit = 0d;
                     for (String h : hmquantity.keySet()) {
@@ -507,8 +508,9 @@ class Analyze {
                         System.out.println(s);
                         String[] split = s.split("\t");
                         String market = split[1];
-                        top:
-                        for (Market mk : markets) {
+                        donotsell.add(market);
+
+                        top:for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getBid();
                                 double total = (mk.getMinTradeSize()*2d) / rate;
@@ -525,7 +527,7 @@ class Analyze {
                                 }
 
                                 System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
-
+                                donotsell.add(mk.getMarketName());
 //                                if (total >= mk.getMinTradeSize()) {
                                 Order o = buy("buy " + mk.getMarketName() + " " + dfcoins.format(total));
                                 if (o != null) {
@@ -556,6 +558,10 @@ class Analyze {
                         top:
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
+                                if (donotsell.contains(market)){
+                                    System.out.println("Do not Sell!");
+                                    continue;
+                                }
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getMarketCurrency());
                                 double total = mk.getMinTradeSize() * 2d / rate;
