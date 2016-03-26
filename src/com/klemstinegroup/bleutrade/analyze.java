@@ -33,9 +33,10 @@ class Analyze {
     HashMap<String, TickerData> maxhm = new HashMap<String, TickerData>();
     HashMap<String, TickerData> minhm = new HashMap<String, TickerData>();
 
-    DecimalFormat df = new DecimalFormat("000.00");
-    DecimalFormat df1 = new DecimalFormat("000.000000000");
+    DecimalFormat df = new DecimalFormat("000.000");
+    static DecimalFormat df1 = new DecimalFormat("000.00000000");
     private ArrayList<Balance> balance;
+    private boolean refresh;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
 
@@ -48,22 +49,23 @@ class Analyze {
                 while (true) {
                     try {
                         String line = br.readLine();
+                        if (line.equals(" ")) {
+                            refresh = true;
+                        }
                         if (line.startsWith("buy ")) {
                             String[] split = line.split(" ");
 //                            System.out.println(Arrays.toString(split));
-                            if (split.length != 5) {
+                            if (split.length != 3) {
                                 System.out.println("error args=" + split.length);
                             } else {
                                 String market = split[1];
-                                double rate = Double.parseDouble(split[2]);
-                                double quantity = Double.parseDouble(split[3]);
-                                String comments = split[4];
-                                if (comments.length() > 127) comments = comments.substring(0, 127);
+                                double quantity = Double.parseDouble(split[2]);
                                 for (Market mk : markets) {
                                     if (mk.getMarketName().equals(market)) {
                                         System.out.println("Market matched! " + mk.getMarketName() + ": min trade=" + df1.format(mk.getMinTradeSize()));
-                                        if (quantity > mk.getMinTradeSize()) {
-                                            double coint = quantity * rate;
+                                        double rate = tickerHM.get(mk.getMarketName()).getAsk();
+                                        double coint = quantity * rate;
+                                        if (coint >= mk.getMinTradeSize()) {
                                             System.out.println(df1.format(quantity) + " " + mk.getMarketCurrency() + " x " + df1.format(rate) + " " + mk.getBaseCurrency() + " = " + df1.format(coint) + " " + mk.getBaseCurrency());
                                             double fee = coint * .0025;
                                             coint += fee;
@@ -74,24 +76,32 @@ class Analyze {
                                                     System.out.println("I have " + df1.format(b.getBalance()) + " " + mk.getBaseCurrency());
                                                     if (b.getBalance() > coint) {
                                                         System.out.println("okay, I'm buying these:");
-                                                        System.out.println(market + "\t" + df1.format(rate) + "\t#" + df1.format(quantity) + "\t" + comments);
+                                                        System.out.println(market + "\t" + df1.format(rate) + "\t#" + df1.format(quantity));
                                                         try {
-                                                            final long id = Http.buylimit(market, rate, quantity, comments);
+                                                            final long id = Http.buyselllimit(market, rate, quantity,true);
                                                             System.out.println("order number=" + id);
                                                             new Thread(new Runnable() {
                                                                 @Override
                                                                 public void run() {
                                                                     try {
-                                                                        while (Http.getOpenOrders().size()>0){
+                                                                        top:while (true) {
+                                                                            ArrayList<Order> orders = Http.getOrders("OK");
+                                                                            for (Order o:orders){
+                                                                                if (o.getOrderId().equals(id+"")){
+                                                                                    System.out.println("order successful!");
+                                                                                    refresh=true;
+                                                                                    break top;
+                                                                                }
+                                                                            }
                                                                             Thread.sleep(1000);
+
                                                                         }
-                                                                        System.out.println("order successful!");
+
                                                                     } catch (Exception e) {
                                                                         e.printStackTrace();
                                                                     }
                                                                 }
                                                             }).start();
-
 
 
                                                         } catch (Exception e) {
@@ -100,14 +110,80 @@ class Analyze {
                                                     }
                                                 }
                                             }
-                                        }
-                                        else{
-                                            System.out.println("low volume trade!");
+                                        } else {
+                                            System.out.println("low volume trade! "+df1.format(coint) );
                                         }
                                     }
                                 }
                             }
                         }
+
+                        if (line.startsWith("sell ")) {
+                            String[] split = line.split(" ");
+//                            System.out.println(Arrays.toString(split));
+                            if (split.length != 3) {
+                                System.out.println("error args=" + split.length);
+                            } else {
+                                String market = split[1];
+                                double quantity = Double.parseDouble(split[2]);
+                                for (Market mk : markets) {
+                                    if (mk.getMarketName().equals(market)) {
+                                        System.out.println("Market matched! " + mk.getMarketName() + ": min trade=" + df1.format(mk.getMinTradeSize()));
+                                        double rate = tickerHM.get(mk.getMarketName()).getBid();
+                                        double coint = quantity * rate;
+                                        if (coint >= mk.getMinTradeSize()) {
+                                            System.out.println(df1.format(quantity) + " " + mk.getMarketCurrency() + " x " + df1.format(rate) + " " + mk.getBaseCurrency() + " = " + df1.format(coint) + " " + mk.getBaseCurrency());
+                                            double fee = coint * .0025;
+                                            coint -= fee;
+                                            System.out.println("fee = " + df1.format(fee) + " " + mk.getBaseCurrency());
+                                            System.out.println("total=" + df1.format(coint) + " " + mk.getBaseCurrency());
+                                            for (Balance b : balance) {
+                                                if (b.getCurrency().equals(mk.getBaseCurrency())) {
+                                                    System.out.println("I have " + df1.format(b.getBalance()) + " " + mk.getBaseCurrency());
+                                                    if (b.getBalance() > coint) {
+                                                        System.out.println("okay, I'm selling these:");
+                                                        System.out.println(market + "\t" + df1.format(rate) + "\t#" + df1.format(quantity));
+                                                        try {
+                                                            final long id = Http.buyselllimit(market, rate, quantity,false);
+                                                            System.out.println("order number=" + id);
+                                                            new Thread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    try {
+                                                                        top:while (true) {
+                                                                            ArrayList<Order> orders = Http.getOrders("OK");
+                                                                            for (Order o:orders){
+                                                                                if (o.getOrderId().equals(id+"")){
+                                                                                    System.out.println("order successful!");
+                                                                                    refresh=true;
+                                                                                    break top;
+                                                                                }
+                                                                            }
+                                                                            Thread.sleep(1000);
+
+                                                                        }
+
+                                                                    } catch (Exception e) {
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                }
+                                                            }).start();
+
+
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            System.out.println("low volume trade! "+df1.format(coint) );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
 
 
                     } catch (IOException e) {
@@ -349,7 +425,7 @@ class Analyze {
                     System.out.println();
 
                     try {
-                        ArrayList<Order> orderlist = Http.getOpenOrders();
+                        ArrayList<Order> orderlist = Http.getOrders("OPEN");
                         System.out.println("open orders size=" + orderlist.size());
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -369,10 +445,16 @@ class Analyze {
                     }
 
 
-                    try {
-                        Thread.sleep(60000 * 10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    for (int i = 0; i < 1000; i++) {
+                        try {
+                            Thread.sleep(600);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        if (refresh) {
+                            refresh = false;
+                            break;
+                        }
                     }
                 }
             }
