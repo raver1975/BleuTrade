@@ -35,7 +35,8 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 20;
-    private static final double profitmargin = 0.25d;
+    private static final double sellabove = 0.25d;
+    private static final double donotbuybelow=-.10d;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
     public Order buy(String line) {
@@ -450,7 +451,55 @@ class Analyze {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    System.out.println();
+                    System.out.println("----------------------------");
+                    System.out.println("order history");
+                    HashMap<String, Double> hmprice = new HashMap<String, Double>();
+                    HashMap<String, Double> hmquantity = new HashMap<String, Double>();
+                    HashMap<String, Double> hmminsize = new HashMap<String, Double>();
+                    for (Order o : history) {
+                        String g = o.getExchange();
+                        for (Market mk : markets) {
+                            if (mk.getMarketName().equals(g)) {
+                                if (!hmprice.containsKey(g)) hmprice.put(g, 0d);
+                                if (!hmquantity.containsKey(g)) hmquantity.put(g, 0d);
+
+                                hmprice.put(g, hmprice.get(g) + (o.getQuantity() * o.getPrice()));
+                                hmquantity.put(g, hmquantity.get(g) + o.getQuantity());
+                                hmminsize.put(g, mk.getMinTradeSize());
+                                break;
+                            }
+                        }
+
+
+                    }
+                    HashSet<String> goodtoorder = new HashSet<String>();
+                    HashSet<String> donotbuy = new HashSet<String>();
+                    double totprofit = 0d;
+                    for (String h : hmquantity.keySet()) {
+                        double hmqu = hmquantity.get(h);
+                        double hmpr = hmprice.get(h);
+                        double pricenow = tickerHM.get(h).getLast() * hmqu;
+                        double pricethen = hmpr * hmqu;
+                        double profit = pricenow * .9975 - pricethen * 1.0025;
+//
+                        String g1 = h.substring(0, h.indexOf('_'));
+                        String g2 = h.substring(h.indexOf('_') + 1);
+                        if (!g2.equals("BTC"))
+                            profit *= tickerHM.get(g2 + "_" + "BTC").getAsk();
+                        System.out.println(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
+                        totprofit += profit;
+                        double total = hmminsize.get(h) * 2d / tickerHM.get(h).getBid();
+                        if (profit * bitcoinprice >= sellabove && balanceHM.get(g1).getAvailable() > total) {
+                            goodtoorder.add(h);
+                            Order o = sell("sell " + h + " " + dfcoins.format(total));
+                            o.setQuantity(-o.getQuantity());
+                            history.add(o);
+                        }
+                        if (profit * bitcoinprice <=donotbuybelow) donotbuy.add(h);
+                    }
+                    System.out.println(dfcoins.format(totprofit) + "\t$" + dfdollars.format(totprofit * bitcoinprice) + "\t" + "total");
+
+
 
                     System.out.println("----------------------------");
                     System.out.println("buy low");
@@ -467,6 +516,11 @@ class Analyze {
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 if (b.getAvailable()/rate  < total) {
                                     System.out.println("Insufficient Funds=" + dfcoins.format(b.getAvailable() / rate) + "\t" + dfcoins.format(total));
+                                    continue top;
+                                }
+
+                                if (donotbuy.contains(market)){
+                                    System.out.println("Do not buy!");
                                     continue top;
                                 }
 
@@ -490,52 +544,6 @@ class Analyze {
                     }
 
 
-                    System.out.println("----------------------------");
-                    System.out.println("order history");
-                    HashMap<String, Double> hmprice = new HashMap<String, Double>();
-                    HashMap<String, Double> hmquantity = new HashMap<String, Double>();
-                    HashMap<String, Double> hmminsize = new HashMap<String, Double>();
-                    for (Order o : history) {
-                        String g = o.getExchange();
-                        for (Market mk : markets) {
-                            if (mk.getMarketName().equals(g)) {
-                                if (!hmprice.containsKey(g)) hmprice.put(g, 0d);
-                                if (!hmquantity.containsKey(g)) hmquantity.put(g, 0d);
-
-                                hmprice.put(g, hmprice.get(g) + (o.getQuantity() * o.getPrice()));
-                                hmquantity.put(g, hmquantity.get(g) + o.getQuantity());
-                                hmminsize.put(g, mk.getMinTradeSize());
-                                break;
-                            }
-                        }
-
-
-                    }
-                    HashSet<String> goodtoorder = new HashSet<String>();
-                    double totprofit = 0d;
-                    for (String h : hmquantity.keySet()) {
-                        double hmqu = hmquantity.get(h);
-                        double hmpr = hmprice.get(h);
-                        double pricenow = tickerHM.get(h).getBid() * hmqu;
-                        double pricethen = hmpr * hmqu;
-                        double profit = pricenow * .9975 - pricethen * 1.0025;
-//
-                        String g1 = h.substring(0, h.indexOf('_'));
-                        String g2 = h.substring(h.indexOf('_') + 1);
-                        if (!g2.equals("BTC"))
-                            profit *= tickerHM.get(g2 + "_" + "BTC").getAsk();
-                        System.out.println(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
-                        totprofit += profit;
-                        double total = hmminsize.get(h) * 2d / tickerHM.get(h).getBid();
-                        if (profit * bitcoinprice >= profitmargin && balanceHM.get(g1).getAvailable() > total) {
-                            goodtoorder.add(h);
-                            Order o = sell("sell " + h + " " + dfcoins.format(total));
-                            o.setQuantity(-o.getQuantity());
-                            history.add(o);
-                        }
-                    }
-                    System.out.println(dfcoins.format(totprofit) + "\t$" + dfdollars.format(totprofit * bitcoinprice) + "\t" + "total");
-
 
 //                    sell high
                     System.out.println("----------------------------");
@@ -551,8 +559,8 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getMarketCurrency());
                                 double total = mk.getMinTradeSize() * 2d / rate;
-                                if (b.getAvailable() < total) {
-                                    System.out.println("Insufficient Funds 2"+"\t"+dfcoins.format(total)+" > "+dfcoins.format(b.getAvailable()));
+                                if (b.getAvailable()/rate < total) {
+                                    if (b.getAvailable()!=0d)System.out.println("Insufficient Funds 2"+"\t"+dfcoins.format(total)+" > "+dfcoins.format(b.getAvailable()));
                                     continue top;
                                 }
                                 if (goodtoorder.contains(market)) {
@@ -583,18 +591,24 @@ class Analyze {
                     System.out.println("-------------------------------------------------------------------------------------------------");
                     //history cleanup
                     //collect negative ones, total them up
-                    ArrayList<Order> remove = new ArrayList<Order>();
-                    for (Order o : history) {
-                        for (Order o1 : history) {
-                            if (o == o1) continue;
-                            if (o.getPrice() == -o1.getPrice()) {
-                                remove.add(o);
-                                remove.add(o1);
+                    boolean flag=false;
+                    while(!flag) {
+                        flag=true;
+                        ArrayList<Order> remove = new ArrayList<Order>();
+                        top:for (Order o : history) {
+                            for (Order o1 : history) {
+                                if (o == o1) continue;
+                                if (o.getPrice() == -o1.getPrice() && o.getType().equals("BUY") && o1.getType().equals("SELL")) {
+                                    System.out.println("removing "+o+"\t"+o1);
+                                    remove.add(o);
+                                    remove.add(o1);
+                                    flag = false;
+                                    break top;
+                                }
                             }
                         }
+                        history.removeAll(remove);
                     }
-                    history.removeAll(remove);
-
 
                     try {
                         Serializer.saveHistory(history);
