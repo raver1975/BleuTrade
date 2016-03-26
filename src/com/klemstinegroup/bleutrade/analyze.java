@@ -1,10 +1,8 @@
 package com.klemstinegroup.bleutrade;
 
 
-import com.klemstinegroup.bleutrade.json.Balance;
+import com.klemstinegroup.bleutrade.json.*;
 import com.klemstinegroup.bleutrade.json.Currency;
-import com.klemstinegroup.bleutrade.json.Market;
-import com.klemstinegroup.bleutrade.json.Ticker;
 import edu.princeton.cs.algs4.BellmanFordSP;
 import edu.princeton.cs.algs4.DirectedEdge;
 import edu.princeton.cs.algs4.EdgeWeightedDigraph;
@@ -37,6 +35,7 @@ class Analyze {
 
     DecimalFormat df = new DecimalFormat("000.00");
     DecimalFormat df1 = new DecimalFormat("000.000000000");
+    private ArrayList<Balance> balance;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
 
@@ -46,10 +45,70 @@ class Analyze {
             @Override
             public void run() {
                 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-                while(true) {
+                while (true) {
                     try {
-                        String line=br.readLine();
-                        if (line.equals("hello")) System.out.println("Hellooo!");
+                        String line = br.readLine();
+                        if (line.startsWith("buy ")) {
+                            String[] split = line.split(" ");
+//                            System.out.println(Arrays.toString(split));
+                            if (split.length != 5) {
+                                System.out.println("error args=" + split.length);
+                            } else {
+                                String market = split[1];
+                                double rate = Double.parseDouble(split[2]);
+                                double quantity = Double.parseDouble(split[3]);
+                                String comments = split[4];
+                                if (comments.length() > 127) comments = comments.substring(0, 127);
+                                for (Market mk : markets) {
+                                    if (mk.getMarketName().equals(market)) {
+                                        System.out.println("Market matched! " + mk.getMarketName() + ": min trade=" + df1.format(mk.getMinTradeSize()));
+                                        if (quantity > mk.getMinTradeSize()) {
+                                            double coint = quantity * rate;
+                                            System.out.println(df1.format(quantity) + " " + mk.getMarketCurrency() + " x " + df1.format(rate) + " " + mk.getBaseCurrency() + " = " + df1.format(coint) + " " + mk.getBaseCurrency());
+                                            double fee = coint * .0025;
+                                            coint += fee;
+                                            System.out.println("fee = " + df1.format(fee) + " " + mk.getBaseCurrency());
+                                            System.out.println("total=" + df1.format(coint) + " " + mk.getBaseCurrency());
+                                            for (Balance b : balance) {
+                                                if (b.getCurrency().equals(mk.getBaseCurrency())) {
+                                                    System.out.println("I have " + df1.format(b.getBalance()) + " " + mk.getBaseCurrency());
+                                                    if (b.getBalance() > coint) {
+                                                        System.out.println("okay, I'm buying these:");
+                                                        System.out.println(market + "\t" + df1.format(rate) + "\t#" + df1.format(quantity) + "\t" + comments);
+                                                        try {
+                                                            final long id = Http.buylimit(market, rate, quantity, comments);
+                                                            System.out.println("order number=" + id);
+                                                            new Thread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    try {
+                                                                        while (Http.getOpenOrders().size()>0){
+                                                                            Thread.sleep(1000);
+                                                                        }
+                                                                        System.out.println("order successful!");
+                                                                    } catch (Exception e) {
+                                                                        e.printStackTrace();
+                                                                    }
+                                                                }
+                                                            }).start();
+
+
+
+                                                        } catch (Exception e) {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else{
+                                            System.out.println("low volume trade!");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -65,8 +124,8 @@ class Analyze {
         }).start();
 
         try {
-            saved=Serializer.loadSaved();
-            System.out.println("saved size="+saved.size());
+            saved = Serializer.loadSaved();
+            System.out.println("saved size=" + saved.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -113,12 +172,11 @@ class Analyze {
                         try {
                             while (cnt > 0) {
                                 System.out.print((cnt--) + " ");
-                                    Thread.sleep(1000);
+                                Thread.sleep(1000);
                             }
                             System.out.println();
                             continue;
-                        }
-                        catch(Exception e){
+                        } catch (Exception e) {
 
                         }
                     }
@@ -182,7 +240,7 @@ class Analyze {
                             if (td.time < System.currentTimeMillis() - 86400000) {
                                 remove.add(td);
                             } else {
-                                String bb = td.coin + "-" + td.base;
+                                String bb = td.coin + "_" + td.base;
                                 if (!maxhm.containsKey(bb) || td.ask > maxhm.get(bb).ask) {
                                     maxhm.put(bb, td);
                                 }
@@ -214,8 +272,8 @@ class Analyze {
                         double perc = now / range;
                         // System.out.println("perc="+g+"\t"+perc);
 //                        if (perc > 0d && perc < 1d && (perc < .1d || perc > .9d)) {
-                            String s = df.format((perc) * 100d) + "\t" + g + "\t" + minhm.get(g).ask + "\t" + nowhm.get(g).ask + "\t" + maxhm.get(g).ask + "\t" + new Date(minhm.get(g).time) + "\t" + new Date(maxhm.get(g).time);
-                            negativeCycles1.add(s);
+                        String s = df.format((perc) * 100d) + "\t" + g + "\t" + minhm.get(g).ask + "\t" + nowhm.get(g).ask + "\t" + maxhm.get(g).ask + "\t" + new Date(minhm.get(g).time) + "\t" + new Date(maxhm.get(g).time);
+                        negativeCycles1.add(s);
 //                        }
                     }
 //                    try {
@@ -240,7 +298,7 @@ class Analyze {
 //                    negativeCycles=new ArrayList<String>();
                     ArrayList<String> negativeCycles = negativeCycle(hm);
                     Collections.sort(negativeCycles);
-                    for (String s:negativeCycles) System.out.println(s);
+                    for (String s : negativeCycles) System.out.println(s);
 
                     System.out.println("++++++++++++++++++++++++");
 
@@ -258,21 +316,21 @@ class Analyze {
                         e.printStackTrace();
                     }
                     try {
-                        ArrayList<Balance> bal = Http.getBalances();
-                        double bittot=0;
+                        balance = Http.getBalances();
+                        double bittot = 0;
                         System.out.println("Balances:");
-                        for (Balance b : bal) {
+                        for (Balance b : balance) {
                             if (b.getBalance() > 0d) {
                                 System.out.print("  " + b.getCurrency() + "\t" + df1.format(b.getBalance()));
                                 if (b.getCurrency().equals("BTC")) {
                                     System.out.print("\t" + df1.format(b.getBalance()) + "\t$" + df.format(b.getBalance() * bitcoinprice));
-                                    bittot+=b.getBalance();
+                                    bittot += b.getBalance();
                                 }
                                 for (int i = saved.size() - 1; i > -1; i--) {
                                     TickerData td = saved.get(i);
                                     if (td.coin.equals(b.getCurrency()) && td.base.equals("BTC")) {
                                         System.out.print("\t" + df1.format(td.last * b.getBalance()) + "\t$" + df.format(td.last * b.getBalance() * bitcoinprice));
-                                        bittot+=td.last*b.getBalance();
+                                        bittot += td.last * b.getBalance();
                                         break;
                                     }
 
@@ -280,7 +338,7 @@ class Analyze {
                                 System.out.println();
                             }
                         }
-                        System.out.println("  TOT" + "\t-------------\t"+df1.format(bittot) + "\t$" + df.format(bittot * bitcoinprice));
+                        System.out.println("  TOT" + "\t-------------\t" + df1.format(bittot) + "\t$" + df.format(bittot * bitcoinprice));
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -288,8 +346,21 @@ class Analyze {
 
 //                    mainFrame.change(negativeCycles);
 
-                    System.out.println("-------------------------------------------------------------------------------------------------");
+                    System.out.println();
+
+                    try {
+                        ArrayList<Order> orderlist = Http.getOpenOrders();
+                        System.out.println("open orders size=" + orderlist.size());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
                     System.out.println("time=" + new Date());
+
+
+                    System.out.println("-------------------------------------------------------------------------------------------------");
+
 
                     try {
                         Serializer.saveSaved(saved);
@@ -319,7 +390,7 @@ class Analyze {
     }
 
     public ArrayList<String> negativeCycle(HashMap<String, Double> hm) {
-        ArrayList<String> al=new ArrayList<String>();
+        ArrayList<String> al = new ArrayList<String>();
         HashSet<String> hs = new HashSet();
         for (String g : hm.keySet()) {
             String g1 = g.substring(0, g.indexOf('_'));

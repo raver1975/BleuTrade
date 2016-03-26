@@ -1,11 +1,8 @@
 package com.klemstinegroup.bleutrade;
 
 
-import com.klemstinegroup.bleutrade.json.Balance;
-import com.klemstinegroup.bleutrade.json.Currency;
+import com.klemstinegroup.bleutrade.json.*;
 import com.klemstinegroup.bleutrade.HttpKeys;
-import com.klemstinegroup.bleutrade.json.Market;
-import com.klemstinegroup.bleutrade.json.Ticker;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,6 +17,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,9 +31,10 @@ import java.util.Map;
 public class Http {
 
     static String uri = "https://bleutrade.com/api/v2";
+    static DecimalFormat df = new DecimalFormat("000.000000000");
 
     public static double bitcoinPrice() throws Exception {
-        String url="https://api.coinbase.com/v2/prices/spot?currency=USD";
+        String url = "https://api.coinbase.com/v2/prices/spot?currency=USD";
         URL website = new URL(url);
         URLConnection connection = website.openConnection();
         BufferedReader in = new BufferedReader(
@@ -50,17 +49,17 @@ public class Http {
 
         in.close();
         String res = response.toString();
-        JSONObject obj=new JSONObject(res);
+        JSONObject obj = new JSONObject(res);
         return obj.getJSONObject("data").getDouble("amount");
 
     }
 
 
     public static JSONObject open(String url, Map<String, String> params) throws IOException {
-        url=uri+url;
+        url = uri + url;
         if (params == null) params = new HashMap<String, String>();
 
-        if (params.size()>0) {
+        if (params.size() > 0) {
 
             url += "?";
             for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -69,7 +68,7 @@ public class Http {
             }
             url = url.substring(0, url.length() - 1);
         }
-        System.out.println("opening url=" + (url.length()<80?url:url.substring(0,80)));
+        System.out.println("opening url=" + (url.length() < 80 ? url : url.substring(0, 80)));
         URL website = new URL(url);
         URLConnection connection = website.openConnection();
         BufferedReader in = new BufferedReader(
@@ -84,16 +83,16 @@ public class Http {
 
         in.close();
         String res = response.toString();
-       // System.out.println("response="+res);
+        // System.out.println("response="+res);
         return new JSONObject(res);
     }
 
     public static JSONObject openPrivate(String url, Map<String, String> params) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
-        url=uri+url;
+        url = uri + url;
         if (params == null) params = new HashMap<String, String>();
-        params.put("apikey",HttpKeys.apikey);
+        params.put("apikey", HttpKeys.apikey);
 
-        if (params.size()>0) {
+        if (params.size() > 0) {
 
             url += "?";
             for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -110,11 +109,11 @@ public class Http {
 
         String hash = toHex(sha_HMAC.doFinal(url.getBytes()));
 
-        System.out.println("opening url=" + (url.length()<80?url:url.substring(0,80)));
+        System.out.println("opening url=" + (url.length() < 80 ? url : url.substring(0, 80)));
         URL website = new URL(url);
 
         URLConnection connection = website.openConnection();
-        connection.setRequestProperty("apisign",hash);
+        connection.setRequestProperty("apisign", hash);
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(
@@ -130,78 +129,79 @@ public class Http {
         String res = response.toString();
         return new JSONObject(res);
     }
+
     public static String toHex(byte[] bytes) {
         BigInteger bi = new BigInteger(1, bytes);
         return String.format("%0" + (bytes.length << 1) + "x", bi);
     }
 
     public static ArrayList<Currency> getCurrencies() throws Exception {
-        JSONObject json=null;
+        JSONObject json = null;
         try {
-            json=open("/public/getcurrencies",null);
+            json = open("/public/getcurrencies", null);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (json==null)return null;
-        boolean success=json.getBoolean("success");
-        String message=json.getString("message");
-        if (!success)throw new Exception("error!");
+        if (json == null) return null;
+        boolean success = json.getBoolean("success");
+        String message = json.getString("message");
+        if (!success) throw new Exception("error!");
 
-        JSONArray array=json.getJSONArray("result");
-        ArrayList<Currency> arr=new ArrayList<Currency>();
-        for (int i=0;i<array.length();i++){
+        JSONArray array = json.getJSONArray("result");
+        ArrayList<Currency> arr = new ArrayList<Currency>();
+        for (int i = 0; i < array.length(); i++) {
             arr.add(Currency.fromJson(array.getJSONObject(i)));
         }
         return arr;
     }
 
     public static ArrayList<Market> getMarkets() throws Exception {
-        JSONObject json=null;
+        JSONObject json = null;
         try {
-            json=open("/public/getmarkets",null);
+            json = open("/public/getmarkets", null);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        boolean success=json.getBoolean("success");
-        String message=json.getString("message");
-        if (!success)throw new Exception("error!");
+        boolean success = json.getBoolean("success");
+        String message = json.getString("message");
+        if (!success) throw new Exception("error!");
 
-        JSONArray array=json.getJSONArray("result");
-        ArrayList<Market> arr=new ArrayList<Market>();
-        for (int i=0;i<array.length();i++){
+        JSONArray array = json.getJSONArray("result");
+        ArrayList<Market> arr = new ArrayList<Market>();
+        for (int i = 0; i < array.length(); i++) {
             arr.add(Market.fromJson(array.getJSONObject(i)));
         }
         return arr;
     }
 
     public static Ticker getTicker(String ticker) throws Exception {
-        ArrayList<String> al=new ArrayList<String>();
+        ArrayList<String> al = new ArrayList<String>();
         al.add(ticker);
         return getTickers(al).get(0);
     }
 
     public static ArrayList<Ticker> getTickers(List<String> tickers) throws Exception {
-        JSONObject json=null;
-        HashMap<String,String> params=new HashMap<String, String>();
-        if (tickers!=null){
-            String s="";
-            for (String t:tickers)s+=t+",";
-            s=s.substring(0,s.length()-1);
-            params.put("market",s);
+        JSONObject json = null;
+        HashMap<String, String> params = new HashMap<String, String>();
+        if (tickers != null) {
+            String s = "";
+            for (String t : tickers) s += t + ",";
+            s = s.substring(0, s.length() - 1);
+            params.put("market", s);
         }
         try {
-            json=open("/public/getticker",params);
+            json = open("/public/getticker", params);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        boolean success=json.getBoolean("success");
-        if (!success)throw new Exception("error!");
+        boolean success = json.getBoolean("success");
+        if (!success) throw new Exception("error!");
 
-        JSONArray array=json.getJSONArray("result");
-        ArrayList<Ticker> arr=new ArrayList<Ticker>();
-        for (int i=0;i<array.length();i++){
+        JSONArray array = json.getJSONArray("result");
+        ArrayList<Ticker> arr = new ArrayList<Ticker>();
+        for (int i = 0; i < array.length(); i++) {
             arr.add(Ticker.fromJson(array.getJSONObject(i)));
         }
         return arr;
@@ -209,19 +209,61 @@ public class Http {
     }
 
     public static ArrayList<Balance> getBalances() throws Exception {
-        JSONObject json=null;
+        JSONObject json = null;
         try {
-            json=openPrivate("/account/getbalances",null);
+            json = openPrivate("/account/getbalances", null);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        boolean success=json.getBoolean("success");
-        if (!success)throw new Exception("error!");
-        JSONArray array=json.getJSONArray("result");
-        ArrayList<Balance> arr=new ArrayList<Balance>();
-        for (int i=0;i<array.length();i++){
+        boolean success = json.getBoolean("success");
+        if (!success) throw new Exception("error!");
+        JSONArray array = json.getJSONArray("result");
+        ArrayList<Balance> arr = new ArrayList<Balance>();
+        for (int i = 0; i < array.length(); i++) {
             arr.add(Balance.fromJson(array.getJSONObject(i)));
         }
         return arr;
+    }
+
+    public static ArrayList<Order> getOpenOrders() throws Exception {
+        JSONObject json = null;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("market", "ALL");
+        params.put("orderstatus", "OPEN");
+        params.put("ordertype", "ALL");
+
+        try {
+            json = openPrivate("/account/getorders", params);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        boolean success = json.getBoolean("success");
+        if (!success) throw new Exception("error!");
+        JSONArray array = json.getJSONArray("result");
+        ArrayList<Order> arr = new ArrayList<Order>();
+        for (int i = 0; i < array.length(); i++) {
+            arr.add(Order.fromJson(array.getJSONObject(i)));
+        }
+        return arr;
+    }
+
+    public static long buylimit(String market, double rate, double quantity, String comments) throws Exception {
+        JSONObject json = null;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("market", market);
+        params.put("rate", df.format(rate));
+        params.put("quantity", df.format(quantity));
+        params.put("comments", comments);
+        System.out.println("placing buy order:"+market+"\t" +df.format(rate)+"\t#"+df.format(quantity)+"\t"+comments);
+        if (true)return 0;
+        try {
+            json = openPrivate("/account/buylimit", params);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        boolean success = json.getBoolean("success");
+        if (!success) throw new Exception("error!");
+        JSONObject result = json.getJSONObject("result");
+        return result.getLong("orderid");
     }
 }
