@@ -508,6 +508,7 @@ class Analyze {
 
 
                     }
+                    HashSet<String> goodtoorder=new HashSet<String>();
                     double totprofit = 0d;
                     for (String h : hmquantity.keySet()) {
                         double hmqu = hmquantity.get(h);
@@ -522,8 +523,12 @@ class Analyze {
                             profit *= tickerHM.get(g2 + "_" + "BTC").getBid();
                         System.out.println(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
                         totprofit += profit;
-                        if (profit * bitcoinprice >= 0.01d) {
-                            sell("sell " + h + " " + dfcoins.format(hmminsize.get(h)));
+                        double total=hmminsize.get(h)*2d/tickerHM.get(h).getAsk();
+                        if (profit * bitcoinprice >= 0.01d&&balanceHM.get(g2).getAvailable()>total) {
+                            goodtoorder.add(h);
+                            Order o=sell("sell " + h + " " + dfcoins.format(total));
+                            o.setQuantity(-o.getQuantity());
+                            history.add(o);
                         }
                     }
                     System.out.println(dfcoins.format(totprofit) + "\t$" + dfdollars.format(totprofit * bitcoinprice) + "\t" + "total");
@@ -542,13 +547,18 @@ class Analyze {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getMarketCurrency());
-                                double total = mk.getMinTradeSize();
+                                double total = mk.getMinTradeSize()*2d/rate;
                                 if (b.getAvailable() < total) {
                                     System.out.println("Insufficient Funds 2"+"\t"+dfcoins.format(total)+" > "+dfcoins.format(b.getAvailable()));
                                     continue top;
                                 }
-                                System.out.println(dfcoins.format(total) + mk.getMarketCurrency() + " costs :" + dfcoins.format(rate*total) + " " + mk.getBaseCurrencyLong() + "\t" + "have:" + dfcoins.format(b.getAvailable()));
-                                Order o = sell("sell " + mk.getMarketName() + " " + dfcoins.format(total));
+                                if (goodtoorder.contains(market)){
+                                    System.out.println(dfcoins.format(total) + mk.getMarketCurrency() + " costs :" + dfcoins.format(rate * total) + " " + mk.getBaseCurrencyLong() + "\t" + "have:" + dfcoins.format(b.getAvailable()));
+                                    Order o=sell("sell " + mk.getMarketName() + " " + dfcoins.format(total));
+                                    o.setQuantity(-o.getQuantity());
+                                    history.add(o);
+                                }
+                                else System.out.println("Not profitable to sell");
                             }
                         }
                     }
