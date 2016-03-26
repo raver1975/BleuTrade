@@ -2,7 +2,6 @@ package com.klemstinegroup.bleutrade;
 
 
 import com.klemstinegroup.bleutrade.json.*;
-import com.klemstinegroup.bleutrade.HttpKeys;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -12,12 +11,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -248,13 +245,15 @@ public class Http {
     }
 
     public static long buyselllimit(String market, double rate, double quantity, boolean buy) throws Exception {
+        if (!buy && market.contains("BLEU"))return -1;
         JSONObject json = null;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("market", market);
-        params.put("rate", Analyze.df1.format(rate));
-        params.put("quantity", Analyze.df1.format(quantity));
+        params.put("rate", Analyze.dfcoins.format(rate));
+        params.put("quantity", Analyze.dfcoins.format(quantity));
 //        params.put("comments", comments);
-        System.out.println("placing " + (buy ? "buy" : "sell") + " order:" + market + "\t" + Analyze.df1.format(rate) + "\t#" + Analyze.df1.format(quantity));
+        System.out.println("placing " + (buy ? "buy" : "sell") + " order:" + market + "\t" + Analyze.dfcoins.format(rate) + "\t#" + Analyze.dfcoins.format(quantity));
+        if (Analyze.debug)return -1;
         try {
             if (buy) json = openPrivate("/market/buylimit", params);
             else json = openPrivate("/market/selllimit", params);
@@ -267,5 +266,20 @@ public class Http {
         return result.getLong("orderid");
     }
 
-
+    public static boolean cancel(long id) throws Exception {
+        JSONObject json = null;
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("orderid", Long.toString(id));
+        System.out.println("canceling order "+id);
+        if (Analyze.debug)return true;
+        try {
+            json = openPrivate("/market/cancel", params);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        boolean success = json.getBoolean("success");
+        if (!success) throw new Exception(json.getString("message"));
+        JSONObject result = json.getJSONObject("result");
+        return success;
+    }
 }

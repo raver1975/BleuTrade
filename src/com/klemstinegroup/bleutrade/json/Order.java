@@ -10,8 +10,10 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 @Generated("org.jsonschema2pojo")
-public class Order {
+public class Order implements Serializable{
 
 @SerializedName("OrderId")
 @Expose

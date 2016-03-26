@@ -12,9 +12,9 @@ public class TickerData implements Serializable{
     //String g1 = s.substring(0, s.indexOf('_'));
     //String g2 = s.substring(s.indexOf('_') + 1);
     //Ticker t=tickerHM.get(s);
-    //String bid=df.format(new BigDecimal(t.getBid()));
-    //String ask=df.format(new BigDecimal(t.getAsk()));
-    //String last=df.format(new BigDecimal(t.getLast()));
+    //String bid=dfdollars.format(new BigDecimal(t.getBid()));
+    //String ask=dfdollars.format(new BigDecimal(t.getAsk()));
+    //String last=dfdollars.format(new BigDecimal(t.getLast()));
     //  String insert="INSERT INTO ticker(time,coin,base,bid,ask,last) VALUES ("+time+",'"+g1+"','"+g2+"',"+bid+","+ask+","+last+")";
     String coin;
     String base;

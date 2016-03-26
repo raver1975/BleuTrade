@@ -1,4 +1,4 @@
-package com.klemstinegroup.bleutrade.json;
+package com.klemstinegroup.bleutrade;
 import org.hsqldb.Server;
 import org.hsqldb.util.*;
 
