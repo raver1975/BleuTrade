@@ -35,7 +35,7 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 60;
-    private static final double profitmargin = 0.05d;
+    private static final double profitmargin = 0.01d;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
     public Order buy(String line) {
@@ -51,7 +51,7 @@ class Analyze {
                 if (mk.getMarketName().equals(market)) {
                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                     double coint = quantity * rate;
-                    if (coint >= mk.getMinTradeSize()) {
+                    if (coint/rate >= mk.getMinTradeSize()) {
                         System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
                         coint += fee;
@@ -67,7 +67,7 @@ class Analyze {
 
                                     if (id != -1)
                                         top:
-                                                for (int i = 0; i < 60; i++) {
+                                                for (int i = 0; i < 10; i++) {
                                                     ArrayList<Order> orders = Http.getOrders("OK");
                                                     for (Order o : orders) {
                                                         if (o.getOrderId().equals(id + "")) {
@@ -128,7 +128,7 @@ class Analyze {
                                     final long id = Http.buyselllimit(market, rate, quantity, false);
                                     System.out.println("order number=" + id);
                                     if (id != -1)
-                                        top:for (int i = 0; i < 60; i++) {
+                                        top:for (int i = 0; i < 10; i++) {
                                             ArrayList<Order> orders = Http.getOrders("OK");
                                             for (Order o : orders) {
                                                 if (o.getOrderId().equals(id + "")) {
@@ -459,10 +459,11 @@ class Analyze {
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                double total = (mk.getMinTradeSize() * 2);
+                                double total = (mk.getMinTradeSize())/rate;
                                 double fee = total * .0025;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
-                                if (b.getAvailable() < total) {
+                                if (b.getAvailable()/rate < total) {
+                                    System.out.println("3Insufficient Funds="+dfcoins.format(b.getAvailable()/rate)+"\t"+ dfcoins.format(total));
                                     continue top;
                                 }
 
@@ -512,9 +513,9 @@ class Analyze {
                     for (String h : hmquantity.keySet()) {
                         double hmqu = hmquantity.get(h);
                         double hmpr = hmprice.get(h);
-                        double pricenow = tickerHM.get(h).getAsk() * hmqu;
+                        double pricenow = tickerHM.get(h).getBid() * hmqu;
                         double pricethen = hmpr * hmqu;
-                        double profit = pricenow - pricethen;
+                        double profit = pricenow*.9975 - pricethen*1.0025;
 //
                         String g1 = h.substring(0, h.indexOf('_'));
                         String g2 = h.substring(h.indexOf('_') + 1);
@@ -523,7 +524,7 @@ class Analyze {
                         System.out.println(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
                         totprofit += profit;
                         double total = hmminsize.get(h) * 2d / tickerHM.get(h).getAsk();
-                        if (profit * bitcoinprice >= profitmargin && balanceHM.get(g2).getAvailable() > total) {
+                        if (profit * bitcoinprice >= profitmargin && balanceHM.get(g1).getAvailable() > total) {
                             goodtoorder.add(h);
                             Order o = sell("sell " + h + " " + dfcoins.format(total));
                             o.setQuantity(-o.getQuantity());
@@ -578,50 +579,17 @@ class Analyze {
                     System.out.println("-------------------------------------------------------------------------------------------------");
                     //history cleanup
                     //collect negative ones, total them up
-                    double totneg = 0;
-                    double totpos = 0;
-                    ArrayList<Order> alneg = new ArrayList<Order>();
-                    ArrayList<Order> alpos = new ArrayList<Order>();
-                        totneg = 0;
-                        totpos = 0;
-
-                        for (Order hh : history) {
-                            if (hh.getQuantity() < 0) {
-                                totneg += hh.getQuantity();
-                                alneg.add(hh);
-                            } else {
-                                totpos += hh.getQuantity();
-                                alpos.add(hh);
-                            }
-                        }
-                        totneg*=-1;
-
-                        if (totpos > totneg) {
-                            double dist = totpos - totneg;
-                            Collections.reverse(alpos);
-                            int t = 0;
-                            for (Order o : alpos) {
-                                t += o.getQuantity();
-                                if (t <= dist) {
-                                    history.remove(o);
-                                    System.out.println("removing "+o);
-                                }
-                            }
-                            for (Order oo : alneg) history.remove(oo);
-                        }
-                        else{
-                            double dist = totpos-totneg;
-                            Collections.reverse(alneg);
-                            int t = 0;
-                            for (Order o : alneg) {
-                                t += o.getQuantity();
-                                if (t >=dist) {
-                                    history.remove(o);
-                                    System.out.println("remOving "+o);
-                                }
-                            }
-                            for (Order oo : alpos) history.remove(oo);
-                        }
+                    ArrayList<Order> remove=new ArrayList<Order>();
+                   for (Order o:history){
+                       for (Order o1:history){
+                           if (o==o1)continue;
+                           if (o.getPrice()==-o1.getPrice()){
+                               remove.add(o);
+                               remove.add(o1);
+                           }
+                       }
+                   }
+                    history.removeAll(remove);
 
 
                     try {
