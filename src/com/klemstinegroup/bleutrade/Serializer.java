@@ -46,4 +46,12 @@ public class Serializer {
         save(saved, historyFile);
         save(saved, "backup_"+historyFile);
     }
+
+    public static ArrayList<TickerData> loadSavedBackup() throws Exception{
+        return (ArrayList<TickerData>) load("Backup_"+savedFile);
+    }
+
+    public static ArrayList<Order> loadHistoryBackup() throws Exception {
+        return (ArrayList<Order>) load("backup_"+historyFile);
+    }
 }
