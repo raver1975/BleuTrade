@@ -48,7 +48,7 @@ public class Serializer {
     }
 
     public static ArrayList<TickerData> loadSavedBackup() throws Exception{
-        return (ArrayList<TickerData>) load("Backup_"+savedFile);
+        return (ArrayList<TickerData>) load("backup_"+savedFile);
     }
 
     public static ArrayList<Order> loadHistoryBackup() throws Exception {
