@@ -37,9 +37,6 @@ class Analyze {
     private static int wait = 20;
     private static final double sellabove = 0.02d;
     private static final double donotbuybelow = -.01d;
-    private static final double minTradeFac = 1d;
-
-    private static double sessionProfit = 0d;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
     public Order buy(String line) {
@@ -94,7 +91,7 @@ class Analyze {
                             }
                         }
                     } else {
-                        System.out.println("buy low volume trade! " + dfcoins.format(coint) + "\t" + dfcoins.format(mk.getMinTradeSize() / minTradeFac));
+                        System.out.println("buy low volume trade! " + dfcoins.format(coint) + "\t" + dfcoins.format(mk.getMinTradeSize() ));
                     }
                 }
             }
@@ -147,7 +144,7 @@ class Analyze {
                             }
                         }
                     } else {
-                        System.out.println("sell low volume trade! " + dfcoins.format(coint) + "\t" + dfcoins.format(mk.getMinTradeSize() / minTradeFac));
+                        System.out.println("sell low volume trade! " + dfcoins.format(coint) + "\t" + dfcoins.format(mk.getMinTradeSize() ));
                     }
                 }
             }
@@ -485,7 +482,7 @@ class Analyze {
 
                                 hmprice.put(g, hmprice.get(g) + (o.getQuantity() * o.getPrice()));
                                 hmquantity.put(g, hmquantity.get(g) + o.getQuantity());
-                                hmminsize.put(g, mk.getMinTradeSize() / minTradeFac);
+                                hmminsize.put(g, mk.getMinTradeSize());
                                 break;
                             }
                         }
@@ -499,7 +496,7 @@ class Analyze {
                     for (String h : hmquantity.keySet()) {
                         double hmqu = hmquantity.get(h);
                         double hmpr = hmprice.get(h);
-                        double pricenow = tickerHM.get(h).getLast() * hmqu;
+                        double pricenow = tickerHM.get(h).getAsk() * hmqu;
                         double pricethen = hmpr * hmqu;
                         double profit = pricenow * .9975 - pricethen * 1.0025;
 //
@@ -509,8 +506,9 @@ class Analyze {
                             profit *= tickerHM.get(g2 + "_" + "BTC").getAsk();
                         System.out.println(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
                         totprofit += profit;
-                        double total = hmminsize.get(h) / minTradeFac / tickerHM.get(h).getBid();
+                        double total = hmminsize.get(h)  / tickerHM.get(h).getAsk();
                         boolean flag = false;
+                        if (profit * bitcoinprice >= 0.01d)goodtoorder.add(h);
                         if (profit * bitcoinprice >= sellabove) {
                             goodtoorder.add(h);
                             Order o = sell("sell " + h + " " + dfcoins.format(total));
@@ -527,9 +525,6 @@ class Analyze {
                     }
                     System.out.println(dfcoins.format(totprofit) + "\t$" + dfdollars.format(totprofit * bitcoinprice) + "\t" + "total");
 
-                    sessionProfit = totprofit;
-
-
                     System.out.println("----------------------------");
                     System.out.println("buy low");
                     for (String s : negativeCyclesLow) {
@@ -541,21 +536,22 @@ class Analyze {
                         top:
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
-                                double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                double total = (mk.getMinTradeSize() / minTradeFac) * rate;
+                                double rate = tickerHM.get(mk.getMarketName()).getBid();
+                                double total = (mk.getMinTradeSize()*2d);
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
-                                if (b.getAvailable() < total) {
-                                    //System.out.println("Insufficient Funds=" + dfcoins.format(b.getAvailable() / rate) + "\t" + dfcoins.format(total));
-                                    continue top;
-                                }
 
                                 if (donotbuy.contains(market)) {
                                     System.out.println("Do not buy!");
                                     continue top;
                                 }
 
+                                if (total*rate>b.getAvailable()){
+                                    continue top;
+                                }
+
                                 System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
                                 donotsell.add(mk.getMarketName());
+
 //                                if (total >= mk.getMinTradeSize()*minTradeFac) {
                                 Order o = buy("buy " + mk.getMarketName() + " " + dfcoins.format(total));
                                 if (o != null) history.add(o);
@@ -593,7 +589,7 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
 
-                                double total = (mk.getMinTradeSize() / minTradeFac);
+                                double total = (mk.getMinTradeSize());
                                 if (b.getAvailable() < total / rate) {
                                     continue top;
                                 }
