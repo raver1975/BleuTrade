@@ -35,9 +35,9 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 20;
-    private static final double sellabove = 0.020d;
-    private static final double donotbuybelow = -.02d;
-    private static final double minTradeFac = 1d;
+    private static final double sellabove = 0.25d;
+    private static final double donotbuybelow = -.03d;
+    private static final double minTradeFac = 100d;
 
     private static double sessionProfit= 0d;
 
@@ -117,7 +117,7 @@ class Analyze {
                     double rate = tickerHM.get(mk.getMarketName()).getBid();
                     double coint = quantity * rate;
 
-                    if (coint >= mk.getMinTradeSize() * minTradeFac) {
+                    if (coint >= mk.getMinTradeSize()) {
                         System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
                         coint -= fee;
