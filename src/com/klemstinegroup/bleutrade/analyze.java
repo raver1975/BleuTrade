@@ -36,7 +36,7 @@ class Analyze {
     private boolean refresh;
     private static int wait = 20;
     private static final double sellabove = 0.10d;
-    private static final double donotbuybelow=-.05d;
+    private static final double donotbuybelow = -.05d;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
     public Order buy(String line) {
@@ -52,10 +52,10 @@ class Analyze {
                 if (mk.getMarketName().equals(market)) {
                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                     double coint = quantity * rate;
-                    if (coint < mk.getMinTradeSize()*rate) {
-                        coint=(mk.getMinTradeSize()*2d)/rate;
+                    if (coint < mk.getMinTradeSize() * rate) {
+                        coint = (mk.getMinTradeSize() * 2d) / rate;
                     }
-                    if (coint  >= mk.getMinTradeSize()*rate) {
+                    if (coint >= mk.getMinTradeSize()) {
 //                        System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
                         coint += fee;
@@ -75,7 +75,7 @@ class Analyze {
                                                     ArrayList<Order> orders = Http.getOrders("OK");
                                                     for (Order o : orders) {
                                                         if (o.getOrderId().equals(id + "")) {
-                                                            System.out.println("order successful! "+id);
+                                                            System.out.println("order successful! " + id);
 //                                                                refresh = true;
                                                             return o;
                                                         }
@@ -214,6 +214,10 @@ class Analyze {
 
             ArrayList<Order> remove = new ArrayList<Order>();
             for (Order o : history) {
+                if (o == null) {
+                    remove.add(o);
+                    continue;
+                }
                 if (o.getExchange().contains("BLEU")) remove.add(o);
             }
             history.removeAll(remove);
@@ -405,7 +409,6 @@ class Analyze {
 //                    System.out.println("Negative Cycles");
 //                    for (String s : negativeCycles) System.out.println(s);
 
-                    System.out.println("----------------------------");
 
                     Collections.sort(negativeCyclesLow);
                     Collections.sort(negativeCyclesHigh);
@@ -423,6 +426,7 @@ class Analyze {
                         for (Balance b : balance) {
                             balanceHM.put(b.getCurrency(), b);
                         }
+                        System.out.println("----------------------------");
                         double bittot = 0;
                         System.out.println("Balances:");
                         for (Balance b : balance) {
@@ -488,16 +492,17 @@ class Analyze {
                         System.out.println(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
                         totprofit += profit;
                         double total = hmminsize.get(h) * 2d / tickerHM.get(h).getBid();
-                        if (profit * bitcoinprice >= sellabove && balanceHM.get(g1).getAvailable() > total) {
+                        boolean flag = false;
+                        if (profit * bitcoinprice >= sellabove) {
                             goodtoorder.add(h);
                             Order o = sell("sell " + h + " " + dfcoins.format(total));
                             o.setQuantity(-o.getQuantity());
                             history.add(o);
+                            flag = true;
                         }
-                        if (profit * bitcoinprice <=donotbuybelow) donotbuy.add(h);
+                        if (profit * bitcoinprice <= donotbuybelow || flag == true) donotbuy.add(h);
                     }
                     System.out.println(dfcoins.format(totprofit) + "\t$" + dfdollars.format(totprofit * bitcoinprice) + "\t" + "total");
-
 
 
                     System.out.println("----------------------------");
@@ -508,18 +513,19 @@ class Analyze {
                         String market = split[1];
                         donotsell.add(market);
 
-                        top:for (Market mk : markets) {
+                        top:
+                        for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                double total = (mk.getMinTradeSize()*2d) / rate;
-                                double fee = total * .0025;
+                                double total = (mk.getMinTradeSize() * 2d) / rate;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
-                                if (b.getAvailable()/rate < total) {
+                                System.out.println("rate=" + dfcoins.format(rate) + "\t" + "total=" + dfcoins.format(total) + "\t" + "b=" + dfcoins.format(b.getAvailable()));
+                                if (b.getAvailable() < total) {
                                     System.out.println("Insufficient Funds=" + dfcoins.format(b.getAvailable() / rate) + "\t" + dfcoins.format(total));
                                     continue top;
                                 }
 
-                                if (donotbuy.contains(market)){
+                                if (donotbuy.contains(market)) {
                                     System.out.println("Do not buy!");
                                     continue top;
                                 }
@@ -528,6 +534,7 @@ class Analyze {
                                 donotsell.add(mk.getMarketName());
 //                                if (total >= mk.getMinTradeSize()) {
                                 Order o = buy("buy " + mk.getMarketName() + " " + dfcoins.format(total));
+                                history.add(o);
                                 if (o != null) {
                                     if (!o.getExchange().contains("BLEU")) {
                                         history.add(o);
@@ -544,7 +551,6 @@ class Analyze {
                     }
 
 
-
 //                    sell high
                     System.out.println("----------------------------");
                     System.out.println("sell high");
@@ -556,17 +562,17 @@ class Analyze {
                         top:
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
-                                if (donotsell.contains(market)){
+                                if (donotsell.contains(market)) {
                                     System.out.println("Do not Sell!");
                                     continue;
                                 }
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getMarketCurrency());
-                                double total = mk.getMinTradeSize() * 2d;
-                                if (b.getAvailable()/rate < total) {
-                                    if (b.getAvailable()!=0d)System.out.println("Insufficient Funds 2"+"\t"+dfcoins.format(total)+" > "+dfcoins.format(b.getAvailable()));
-                                    continue top;
-                                }
+                                double total = (mk.getMinTradeSize() * 2d) / rate;
+//                                if (b.getAvailable()< total ) {
+////                                    if (b.getAvailable()!=0d)System.out.println("Insufficient Funds 2"+"\t"+dfcoins.format(total)+" > "+dfcoins.format(b.getAvailable()));
+//                                    continue top;
+//                                }
                                 if (goodtoorder.contains(market)) {
                                     System.out.println(s);
                                     System.out.println(dfcoins.format(total) + mk.getMarketCurrency() + " costs :" + dfcoins.format(rate * total) + " " + mk.getBaseCurrencyLong() + "\t" + "have:" + dfcoins.format(b.getAvailable()));
@@ -595,15 +601,24 @@ class Analyze {
                     System.out.println("-------------------------------------------------------------------------------------------------");
                     //history cleanup
                     //collect negative ones, total them up
-                    boolean flag=false;
-                    while(!flag) {
-                        flag=true;
+                    boolean flag = false;
+                    while (!flag) {
+                        flag = true;
                         ArrayList<Order> remove = new ArrayList<Order>();
-                        top:for (Order o : history) {
+                        top:
+                        for (Order o : history) {
+                            if (o == null) {
+                                remove.add(o);
+                                continue;
+                            }
                             for (Order o1 : history) {
+                                if (o1 == null) {
+                                    remove.add(o1);
+                                    continue;
+                                }
                                 if (o == o1) continue;
                                 if (o.getPrice() == -o1.getPrice() && o.getType().equals("BUY") && o1.getType().equals("SELL")) {
-                                    System.out.println("removing "+o+"\t"+o1);
+                                    System.out.println("removing " + o + "\t" + o1);
                                     remove.add(o);
                                     remove.add(o1);
                                     flag = false;
