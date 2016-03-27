@@ -55,7 +55,7 @@ class Analyze {
                 if (mk.getMarketName().equals(market)) {
                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                     double coint = quantity * rate;
-                    if (coint >= mk.getMinTradeSize() / minTradeFac) {
+                    if (coint >= mk.getMinTradeSize()) {
 //                        System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
                         coint += fee;
@@ -117,7 +117,7 @@ class Analyze {
                     double rate = tickerHM.get(mk.getMarketName()).getBid();
                     double coint = quantity * rate;
 
-                    if (coint >= mk.getMinTradeSize() / minTradeFac) {
+                    if (coint >= mk.getMinTradeSize() ) {
                         System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
                         coint -= fee;
@@ -594,9 +594,7 @@ class Analyze {
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
 
                                 double total = (mk.getMinTradeSize() / minTradeFac);
-                                System.out.println("total/rate=" + dfcoins.format(total / rate) + "\ttotal*rate="+dfcoins.format(total*rate)+"\trate=" + dfcoins.format(rate) + "\ttotal=" + dfcoins.format(total) + "\tb.available()=" + dfcoins.format(b.getAvailable()));
                                 if (b.getAvailable() < total / rate) {
-                                    System.out.println("Insufficient Funds 2" + "\t" + dfcoins.format(total) + " > " + dfcoins.format(b.getAvailable() * rate));
                                     continue top;
                                 }
                                 if (goodtoorder.contains(market)) {
