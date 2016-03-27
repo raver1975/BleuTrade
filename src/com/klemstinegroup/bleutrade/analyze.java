@@ -39,6 +39,8 @@ class Analyze {
     private static final double donotbuybelow = -.02d;
     private static final double minTradeFac = 1d;
 
+    private static double sessionProfit= 0d;
+
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
     public Order buy(String line) {
         line = line.replace("+", "");
@@ -453,7 +455,7 @@ class Analyze {
                         e.printStackTrace();
                     }
                     System.out.println("----------------------------");
-                    System.out.println("order history");
+                    System.out.println("sell high");
                     HashMap<String, Double> hmprice = new HashMap<String, Double>();
                     HashMap<String, Double> hmquantity = new HashMap<String, Double>();
                     HashMap<String, Double> hmminsize = new HashMap<String, Double>();
@@ -507,6 +509,8 @@ class Analyze {
 //                        }
                     }
                     System.out.println(dfcoins.format(totprofit) + "\t$" + dfdollars.format(totprofit * bitcoinprice) + "\t" + "total");
+
+                    sessionProfit=totprofit;
 
 
                     System.out.println("----------------------------");
