@@ -35,8 +35,8 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 20;
-    private static final double sellabove = 0.25d;
-    private static final double donotbuybelow=-.10d;
+    private static final double sellabove = 0.10d;
+    private static final double donotbuybelow=-.05d;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
     public Order buy(String line) {
@@ -52,7 +52,10 @@ class Analyze {
                 if (mk.getMarketName().equals(market)) {
                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                     double coint = quantity * rate;
-                    if (coint / rate >= mk.getMinTradeSize()) {
+                    if (coint < mk.getMinTradeSize()*rate) {
+                        coint=(mk.getMinTradeSize()*2d)/rate;
+                    }
+                    if (coint  >= mk.getMinTradeSize()*rate) {
 //                        System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
                         coint += fee;
@@ -118,13 +121,8 @@ class Analyze {
                         System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
                         coint -= fee;
-                        System.out.println("fee = " + dfcoins.format(fee) + " " + mk.getBaseCurrency());
-                        System.out.println("total=" + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         for (Balance b : balance) {
                             if (b.getCurrency().equals(mk.getMarketCurrency())) {
-                                System.out.println("I have " + dfcoins.format(b.getAvailable()) + " " + mk.getMarketCurrency());
-                                System.out.println("okay, I'm selling these:");
-                                System.out.println(market + "\t" + dfcoins.format(rate) + "\t#" + dfcoins.format(quantity));
                                 try {
                                     final long id = Http.buyselllimit(market, rate, quantity, false);
                                     System.out.println("order number=" + id);
@@ -512,11 +510,11 @@ class Analyze {
 
                         top:for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
-                                double rate = tickerHM.get(mk.getMarketName()).getBid();
+                                double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 double total = (mk.getMinTradeSize()*2d) / rate;
                                 double fee = total * .0025;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
-                                if (b.getAvailable()/rate  < total) {
+                                if (b.getAvailable()/rate < total) {
                                     System.out.println("Insufficient Funds=" + dfcoins.format(b.getAvailable() / rate) + "\t" + dfcoins.format(total));
                                     continue top;
                                 }
@@ -564,7 +562,7 @@ class Analyze {
                                 }
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getMarketCurrency());
-                                double total = mk.getMinTradeSize() * 2d / rate;
+                                double total = mk.getMinTradeSize() * 2d;
                                 if (b.getAvailable()/rate < total) {
                                     if (b.getAvailable()!=0d)System.out.println("Insufficient Funds 2"+"\t"+dfcoins.format(total)+" > "+dfcoins.format(b.getAvailable()));
                                     continue top;
