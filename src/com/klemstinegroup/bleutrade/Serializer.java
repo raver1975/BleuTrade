@@ -35,6 +35,7 @@ public class Serializer {
 
     public static void saveSaved(ArrayList<TickerData> saved) throws Exception {
         save(saved, savedFile);
+        save(saved, "backup_"+savedFile);
     }
 
     public static ArrayList<Order> loadHistory() throws Exception {
@@ -43,5 +44,6 @@ public class Serializer {
 
     public static void saveHistory(ArrayList<Order> saved) throws Exception {
         save(saved, historyFile);
+        save(saved, "backup_"+historyFile);
     }
 }

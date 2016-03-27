@@ -35,8 +35,9 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 20;
-    private static final double sellabove = 0.10d;
-    private static final double donotbuybelow = -.05d;
+    private static final double sellabove = 0.020d;
+    private static final double donotbuybelow = -.02d;
+    private static final double minTradeFac = 1d;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
     public Order buy(String line) {
@@ -91,7 +92,7 @@ class Analyze {
                             }
                         }
                     } else {
-                        System.out.println("low 1 volume trade! " + dfcoins.format(coint) + "\t" + dfcoins.format(mk.getMinTradeSize()));
+                        System.out.println("buy low volume trade! " + dfcoins.format(coint) + "\t" + dfcoins.format(mk.getMinTradeSize() * minTradeFac));
                     }
                 }
             }
@@ -114,7 +115,7 @@ class Analyze {
                     double rate = tickerHM.get(mk.getMarketName()).getBid();
                     double coint = quantity * rate;
 
-                    if (coint >= mk.getMinTradeSize()) {
+                    if (coint >= mk.getMinTradeSize() * minTradeFac) {
                         System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
                         coint -= fee;
@@ -137,13 +138,14 @@ class Analyze {
                                         }
                                     System.out.println("Cancling order " + id);
                                     System.out.println("success = " + Http.cancel(id));
+                                    return null;
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
                         }
                     } else {
-                        System.out.println("low 2 volume trade! " + dfcoins.format(coint) + "\t" + dfcoins.format(mk.getMinTradeSize()));
+                        System.out.println("sell low volume trade! " + dfcoins.format(coint) + "\t" + dfcoins.format(mk.getMinTradeSize() * minTradeFac));
                     }
                 }
             }
@@ -464,7 +466,7 @@ class Analyze {
 
                                 hmprice.put(g, hmprice.get(g) + (o.getQuantity() * o.getPrice()));
                                 hmquantity.put(g, hmquantity.get(g) + o.getQuantity());
-                                hmminsize.put(g, mk.getMinTradeSize());
+                                hmminsize.put(g, mk.getMinTradeSize() * minTradeFac);
                                 break;
                             }
                         }
@@ -488,19 +490,21 @@ class Analyze {
                             profit *= tickerHM.get(g2 + "_" + "BTC").getAsk();
                         System.out.println(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
                         totprofit += profit;
-                        double total = hmminsize.get(h) * 2d / tickerHM.get(h).getBid();
+                        double total = hmminsize.get(h) * minTradeFac / tickerHM.get(h).getBid();
                         boolean flag = false;
                         if (profit * bitcoinprice >= sellabove) {
-
+                            goodtoorder.add(h);
                             Order o = sell("sell " + h + " " + dfcoins.format(total));
-                            o.setQuantity(-o.getQuantity());
-                            history.add(o);
+                            if (o != null) {
+                                o.setQuantity(-o.getQuantity());
+                                history.add(o);
+                            }
                             flag = true;
                         }
                         if (profit * bitcoinprice <= donotbuybelow || flag == true) donotbuy.add(h);
-                        else {
-                            goodtoorder.add(h);
-                        }
+//                        else {
+//                            goodtoorder.add(h);
+//                        }
                     }
                     System.out.println(dfcoins.format(totprofit) + "\t$" + dfdollars.format(totprofit * bitcoinprice) + "\t" + "total");
 
@@ -517,11 +521,10 @@ class Analyze {
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                double total = (mk.getMinTradeSize() * 2d) * rate;
+                                double total = (mk.getMinTradeSize() * minTradeFac) * rate;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
-                                System.out.println("rate=" + dfcoins.format(rate) + "\t" + "total=" + dfcoins.format(total) + "\t" + "b=" + dfcoins.format(b.getAvailable()));
-                                if (b.getAvailable() / rate < total) {
-                                    System.out.println("Insufficient Funds=" + dfcoins.format(b.getAvailable() / rate) + "\t" + dfcoins.format(total));
+                                if (b.getAvailable() < total) {
+                                    //System.out.println("Insufficient Funds=" + dfcoins.format(b.getAvailable() / rate) + "\t" + dfcoins.format(total));
                                     continue top;
                                 }
 
@@ -532,12 +535,12 @@ class Analyze {
 
                                 System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
                                 donotsell.add(mk.getMarketName());
-//                                if (total >= mk.getMinTradeSize()) {
+//                                if (total >= mk.getMinTradeSize()*minTradeFac) {
                                 Order o = buy("buy " + mk.getMarketName() + " " + dfcoins.format(total));
-                                history.add(o);
+                                if (o != null) history.add(o);
                                 if (o != null) {
                                     if (!o.getExchange().contains("BLEU")) {
-                                        history.add(o);
+                                        if (o != null) history.add(o);
                                         try {
                                             Serializer.saveHistory(history);
                                         } catch (Exception e) {
@@ -552,45 +555,38 @@ class Analyze {
 
 
 //                    sell high
-                    System.out.println("----------------------------");
-                    System.out.println("sell high");
-                    for (String s : negativeCyclesHigh) {
-
-                        String[] split = s.split("\t");
-                        String market = split[1];
-                        if (market.contains("BLEU")) continue;
-                        top:
-                        for (Market mk : markets) {
-                            if (mk.getMarketName().equals(market)) {
-                                if (donotsell.contains(market)) {
-                                    System.out.println("Do not Sell!");
-                                    continue;
-                                }
-                                double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                Balance b = balanceHM.get(mk.getMarketCurrency());
-                                double total = (mk.getMinTradeSize() * 2d) / rate;
-//                                if (b.getAvailable()< total ) {
-////                                    if (b.getAvailable()!=0d)System.out.println("Insufficient Funds 2"+"\t"+dfcoins.format(total)+" > "+dfcoins.format(b.getAvailable()));
-//                                    continue top;
+//                    System.out.println("----------------------------");
+//                    System.out.println("sell high");
+//                    for (String s : negativeCyclesHigh) {
+//
+//                        String[] split = s.split("\t");
+//                        String market = split[1];
+//                        if (market.contains("BLEU")) continue;
+//                        top:
+//                        for (Market mk : markets) {
+//                            if (mk.getMarketName().equals(market)) {
+//                                if (donotsell.contains(market)) {
+//                                    System.out.println("Do not Sell!");
+//                                    continue;
 //                                }
-                                if (goodtoorder.contains(market)) {
-                                    System.out.println(s);
-                                    System.out.println(dfcoins.format(total) + mk.getMarketCurrency() + " costs :" + dfcoins.format(rate * total) + " " + mk.getBaseCurrencyLong() + "\t" + "have:" + dfcoins.format(b.getAvailable()));
-                                    Order o = sell("sell " + mk.getMarketName() + " " + dfcoins.format(total));
-                                    o.setQuantity(-o.getQuantity());
-                                    history.add(o);
-                                }
-                                //else System.out.println("Not profitable to sell");
-                            }
-                        }
-                    }
-
-
-//                    try {
-//                        ArrayList<Order> orderlist = Http.getOrders("OPEN");
-//                        System.out.println("open orders size=" + orderlist.size());
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
+//                                double rate = tickerHM.get(mk.getMarketName()).getAsk();
+//                                Balance b = balanceHM.get(mk.getMarketCurrency());
+//                                double total = (mk.getMinTradeSize() * minTradeFac);
+////                                if (b.getAvailable()*rate< total ) {
+////                                    System.out.println("Insufficient Funds 2"+"\t"+dfcoins.format(total)+" > "+dfcoins.format(b.getAvailable()*rate));
+////                                    continue top;
+////                                }
+//                                if (goodtoorder.contains(market)) {
+//                                    System.out.println(s);
+//                                    System.out.println(dfcoins.format(total) + mk.getMarketCurrency() + " costs :" + dfcoins.format(rate * total) + " " + mk.getBaseCurrencyLong() + "\t" + "have:" + dfcoins.format(b.getAvailable()));
+//                                    Order o = sell("sell " + mk.getMarketName() + " " + dfcoins.format(total));
+//                                    if (o != null) {
+//                                        o.setQuantity(-o.getQuantity());
+//                                        history.add(o);
+//                                    }
+//                                }
+//                            }
+//                        }
 //                    }
 
                     System.out.println("----------------------------");

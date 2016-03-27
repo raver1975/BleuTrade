@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.InvalidKeyException;
@@ -29,21 +30,44 @@ public class Http {
 
     static String uri = "https://bleutrade.com/api/v2";
 
-    public static double bitcoinPrice() throws Exception {
+    public static double bitcoinPrice() {
         String url = "https://api.coinbase.com/v2/prices/spot?currency=USD";
-        URL website = new URL(url);
-        URLConnection connection = website.openConnection();
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(
-                        connection.getInputStream()));
+        URL website = null;
+        try {
+            website = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        URLConnection connection = null;
+        try {
+            connection = website.openConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(
+                    new InputStreamReader(
+                            connection.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         StringBuilder response = new StringBuilder();
         String inputLine;
 
-        while ((inputLine = in.readLine()) != null)
-            response.append(inputLine);
+        try {
+            while ((inputLine = in.readLine()) != null)
+                response.append(inputLine);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        in.close();
+        try {
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         String res = response.toString();
         JSONObject obj = new JSONObject(res);
         return obj.getJSONObject("data").getDouble("amount");
@@ -131,7 +155,7 @@ public class Http {
         return String.format("%0" + (bytes.length << 1) + "x", bi);
     }
 
-    public static ArrayList<Currency> getCurrencies() throws Exception {
+    public static ArrayList<Currency> getCurrencies() {
         JSONObject json = null;
         try {
             json = open("/public/getcurrencies", null);
@@ -140,7 +164,7 @@ public class Http {
         }
         if (json == null) return null;
         boolean success = json.getBoolean("success");
-        if (!success) throw new Exception(json.getString("message"));
+        if (!success) System.out.println(json.getString("message"));
 
         JSONArray array = json.getJSONArray("result");
         ArrayList<Currency> arr = new ArrayList<Currency>();
@@ -150,7 +174,7 @@ public class Http {
         return arr;
     }
 
-    public static ArrayList<Market> getMarkets() throws Exception {
+    public static ArrayList<Market> getMarkets()  {
         JSONObject json = null;
         try {
             json = open("/public/getmarkets", null);
@@ -159,7 +183,7 @@ public class Http {
         }
 
         boolean success = json.getBoolean("success");
-        if (!success) throw new Exception(json.getString("message"));
+        if (!success) System.out.println(json.getString("message"));
 
         JSONArray array = json.getJSONArray("result");
         ArrayList<Market> arr = new ArrayList<Market>();
@@ -169,13 +193,13 @@ public class Http {
         return arr;
     }
 
-    public static Ticker getTicker(String ticker) throws Exception {
+    public static Ticker getTicker(String ticker){
         ArrayList<String> al = new ArrayList<String>();
         al.add(ticker);
         return getTickers(al).get(0);
     }
 
-    public static ArrayList<Ticker> getTickers(List<String> tickers) throws Exception {
+    public static ArrayList<Ticker> getTickers(List<String> tickers)  {
         JSONObject json = null;
         HashMap<String, String> params = new HashMap<String, String>();
         if (tickers != null) {
@@ -191,7 +215,7 @@ public class Http {
         }
 
         boolean success = json.getBoolean("success");
-        if (!success) throw new Exception(json.getString("message"));
+        if (!success) System.out.println(json.getString("message"));
 
         JSONArray array = json.getJSONArray("result");
         ArrayList<Ticker> arr = new ArrayList<Ticker>();
@@ -202,15 +226,16 @@ public class Http {
 
     }
 
-    public static ArrayList<Balance> getBalances() throws Exception {
+    public static ArrayList<Balance> getBalances() {
         JSONObject json = null;
         try {
             json = openPrivate("/account/getbalances", null);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (json==null)return null;
         boolean success = json.getBoolean("success");
-        if (!success) throw new Exception(json.getString("message"));
+        if (!success) System.out.println(json.getString("message"));
         JSONArray array = json.getJSONArray("result");
         ArrayList<Balance> arr = new ArrayList<Balance>();
         for (int i = 0; i < array.length(); i++) {
@@ -222,7 +247,7 @@ public class Http {
     //orderstatus (ALL, OK, OPEN, CANCELED)
     //ordertype (ALL, BUY, SELL)
 
-    public static ArrayList<Order> getOrders(String orderStatus) throws Exception {
+    public static ArrayList<Order> getOrders(String orderStatus) {
         JSONObject json = null;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("market", "ALL");
@@ -235,7 +260,7 @@ public class Http {
             e.printStackTrace();
         }
         boolean success = json.getBoolean("success");
-        if (!success) throw new Exception(json.getString("message"));
+        if (!success) System.out.println(json.getString("message"));
         JSONArray array = json.getJSONArray("result");
         ArrayList<Order> arr = new ArrayList<Order>();
         for (int i = 0; i < array.length(); i++) {
@@ -244,7 +269,7 @@ public class Http {
         return arr;
     }
 
-    public static long buyselllimit(String market, double rate, double quantity, boolean buy) throws Exception {
+    public static long buyselllimit(String market, double rate, double quantity, boolean buy) {
         if (!buy && market.contains("BLEU"))return -1;
         JSONObject json = null;
         HashMap<String, String> params = new HashMap<String, String>();
@@ -262,13 +287,14 @@ public class Http {
         }
         boolean success = json.getBoolean("success");
         if (!success) {
-            throw new Exception(json.getString("message"));
+            System.out.println(json.getString("message"));
+            return -1;
         }
         JSONObject result = json.getJSONObject("result");
         return result.getLong("orderid");
     }
 
-    public static boolean cancel(long id) throws Exception {
+    public static boolean cancel(long id) {
         JSONObject json = null;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("orderid", Long.toString(id));
@@ -280,7 +306,7 @@ public class Http {
             e.printStackTrace();
         }
         boolean success = json.getBoolean("success");
-        if (!success) throw new Exception(json.getString("message"));
+        if (!success) System.out.println(json.getString("message"));
         return success;
     }
 }
