@@ -37,7 +37,7 @@ class Analyze {
     private static int wait = 20;
     private static final double sellabove = 0.02d;
     private static final double donotbuybelow = -.01d;
-    private double buyFactor = 10d;
+    private double buyFactor = 1d;
 //    private double buysellfactor=10;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
@@ -541,9 +541,9 @@ class Analyze {
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                double total = (mk.getMinTradeSize() * buyFactor/rate);
-                                if (!mk.getBaseCurrency().equals("BTC"))
-                                    total=total/tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk()*tickerHM.get(market).getAsk();
+                                double total = (mk.getMinTradeSize() * buyFactor)/rate;
+//                                if (!mk.getBaseCurrency().equals("BTC"))
+//                                    total=total*tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 if (donotbuy.contains(market)) {
                                     System.out.println("Do not buy!");
@@ -594,8 +594,8 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 double total = mk.getMinTradeSize() * buyFactor/rate;
-                                if (!mk.getBaseCurrency().equals("BTC"))
-                                    total=total/tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk()*tickerHM.get(market).getAsk();
+//                                if (!mk.getBaseCurrency().equals("BTC"))
+//                                    total=total*tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
 //                                if (b.getAvailable() < total) {
 //                                    continue top;
 //                                }
