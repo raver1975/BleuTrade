@@ -550,9 +550,9 @@ class Analyze {
                                     continue top;
                                 }
 
-//                                if (total > b.getAvailable()) {
-//                                    continue top;
-//                                }
+                                if (total > b.getAvailable()) {
+                                    continue top;
+                                }
 
                                 System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
                                 donotsell.add(mk.getMarketName());
@@ -596,9 +596,9 @@ class Analyze {
                                 double total = mk.getMinTradeSize() * buyFactor/rate;
 //                                if (!mk.getBaseCurrency().equals("BTC"))
 //                                    total=total*tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
-//                                if (b.getAvailable() < total) {
-//                                    continue top;
-//                                }
+                                if (b.getAvailable() < total) {
+                                    continue top;
+                                }
                                 if (goodtoorder.contains(market)) {
                                     System.out.println(s);
                                     if (total*rate < 000.00000001d) total = 000.00000001d/rate;
