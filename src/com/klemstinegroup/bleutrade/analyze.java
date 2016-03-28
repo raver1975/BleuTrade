@@ -54,7 +54,7 @@ class Analyze {
                 if (mk.getMarketName().equals(market)) {
                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                     double coint = quantity * rate;
-                    if (coint >= mk.getMinTradeSize()) {
+//                    if (coint >= mk.getMinTradeSize()) {
 //                        System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
                         coint += fee;
@@ -92,9 +92,9 @@ class Analyze {
 
                             }
                         }
-                    } else {
-                        System.out.println("buy low volume trade! " + dfcoins.format(coint) + "\t" + dfcoins.format(mk.getMinTradeSize() ));
-                    }
+//                    } else {
+//                        System.out.println("buy low volume trade! " + dfcoins.format(coint) + "\t" + dfcoins.format(mk.getMinTradeSize() ));
+//                    }
                 }
             }
         }
@@ -115,7 +115,7 @@ class Analyze {
                 if (mk.getMarketName().equals(market)) {
                     double rate = tickerHM.get(mk.getMarketName()).getBid();
                     double coint =quantity * rate;
-                    if (coint >= mk.getMinTradeSize() ) {
+//                    if (coint >= mk.getMinTradeSize() ) {
                         System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
                         coint -= fee;
@@ -144,9 +144,9 @@ class Analyze {
                                 }
                             }
                         }
-                    } else {
-                        System.out.println("sell low volume trade! " + dfcoins.format(coint) + "\t" + dfcoins.format(mk.getMinTradeSize() ));
-                    }
+//                    } else {
+//                        System.out.println("sell low volume trade! " + dfcoins.format(coint) + "\t" + dfcoins.format(mk.getMinTradeSize() ));
+//                    }
                 }
             }
         }
