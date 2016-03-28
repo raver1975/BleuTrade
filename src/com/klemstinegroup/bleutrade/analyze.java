@@ -538,7 +538,7 @@ class Analyze {
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                double total = mk.getMinTradeSize()*10d;
+                                double total = (mk.getMinTradeSize()*1.1d)*rate;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
 
                                 if (donotbuy.contains(market)) {
