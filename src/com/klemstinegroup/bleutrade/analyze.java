@@ -37,6 +37,7 @@ class Analyze {
     private static int wait = 20;
     private static final double sellabove = 0.02d;
     private static final double donotbuybelow = -.01d;
+    private double buysellfactor=10;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
     public Order buy(String line) {
@@ -51,7 +52,7 @@ class Analyze {
             for (Market mk : markets) {
                 if (mk.getMarketName().equals(market)) {
                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                    double coint = quantity * rate;
+                    double coint = buysellfactor *quantity * rate;
                     if (coint >= mk.getMinTradeSize()) {
 //                        System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
@@ -112,8 +113,7 @@ class Analyze {
             for (Market mk : markets) {
                 if (mk.getMarketName().equals(market)) {
                     double rate = tickerHM.get(mk.getMarketName()).getBid();
-                    double coint = quantity * rate;
-
+                    double coint =buysellfactor*quantity * rate;
                     if (coint >= mk.getMinTradeSize() ) {
                         System.out.println(dfcoins.format(quantity) + " " + mk.getMarketCurrency() + " x " + dfcoins.format(rate) + " " + mk.getBaseCurrency() + " = " + dfcoins.format(coint) + " " + mk.getBaseCurrency());
                         double fee = coint * .0025;
@@ -473,14 +473,14 @@ class Analyze {
                     HashMap<String, Double> hmprice = new HashMap<String, Double>();
                     HashMap<String, Double> hmquantity = new HashMap<String, Double>();
                     HashMap<String, Double> hmminsize = new HashMap<String, Double>();
+
                     for (Order o : history) {
                         String g = o.getExchange();
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(g)) {
                                 if (!hmprice.containsKey(g)) hmprice.put(g, 0d);
                                 if (!hmquantity.containsKey(g)) hmquantity.put(g, 0d);
-
-                                hmprice.put(g, hmprice.get(g) + (o.getQuantity() * o.getPrice()));
+                                hmprice.put(g, hmprice.get(g) + (o.getQuantity() * o.getPrice())*1.0025d);
                                 hmquantity.put(g, hmquantity.get(g) + o.getQuantity());
                                 hmminsize.put(g, mk.getMinTradeSize());
                                 break;
@@ -495,10 +495,10 @@ class Analyze {
                     double totprofit = 0d;
                     for (String h : hmquantity.keySet()) {
                         double hmqu = hmquantity.get(h);
-                        double hmpr = hmprice.get(h);
+                        double pricethen = hmprice.get(h);
                         double pricenow = tickerHM.get(h).getAsk() * hmqu;
-                        double pricethen = hmpr * hmqu;
-                        double profit = pricenow * .9975 - pricethen * 1.0025;
+                        //double pricethen = hmpr * hmqu;
+                        double profit = pricenow * .9975d - pricethen * 1.0025d;
 //
                         String g1 = h.substring(0, h.indexOf('_'));
                         String g2 = h.substring(h.indexOf('_') + 1);
@@ -531,13 +531,14 @@ class Analyze {
                         System.out.println(s);
                         String[] split = s.split("\t");
                         String market = split[1];
+                        System.out.println("market="+market);
                         donotsell.add(market);
 
                         top:
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
-                                double rate = tickerHM.get(mk.getMarketName()).getBid();
-                                double total = (mk.getMinTradeSize()*2d);
+                                double rate = tickerHM.get(mk.getMarketName()).getAsk();
+                                double total = mk.getMinTradeSize()*2d;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
 
                                 if (donotbuy.contains(market)) {
@@ -551,8 +552,6 @@ class Analyze {
 
                                 System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
                                 donotsell.add(mk.getMarketName());
-
-//                                if (total >= mk.getMinTradeSize()*minTradeFac) {
                                 Order o = buy("buy " + mk.getMarketName() + " " + dfcoins.format(total));
                                 if (o != null) history.add(o);
                                 if (o != null) {
@@ -589,7 +588,7 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
 
-                                double total = (mk.getMinTradeSize());
+                                double total = mk.getMinTradeSize();
                                 if (b.getAvailable() < total / rate) {
                                     continue top;
                                 }
