@@ -555,7 +555,7 @@ class Analyze {
                                 }
 
                                 if (total > b.getAvailable()) {
-                                    System.out.println("Insufficient Funds:  asking for="+total+"\thave="+b.getAvailable());
+                                    System.out.println("Insufficient Funds:  asking for="+dfcoins.format(total)+"\thave="+dfcoins.format(b.getAvailable()));
                                     continue top;
                                 }
 
