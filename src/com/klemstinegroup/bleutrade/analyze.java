@@ -542,8 +542,8 @@ class Analyze {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 double total = (mk.getMinTradeSize() * buyFactor)/rate;
-//                                if (!mk.getBaseCurrency().equals("BTC"))
-//                                    total=total*tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
+                                if (!mk.getBaseCurrency().equals("BTC"))
+                                    total=total*tickerHM.get(market).getAsk()/tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 if (donotbuy.contains(market)) {
                                     System.out.println("Do not buy!");
@@ -594,8 +594,8 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 double total = mk.getMinTradeSize() * buyFactor/rate;
-//                                if (!mk.getBaseCurrency().equals("BTC"))
-//                                    total=total*tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
+                                if (!mk.getBaseCurrency().equals("BTC"))
+                                    total=total*tickerHM.get(market).getAsk()/tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
                                 if (b.getAvailable() < total) {
                                     continue top;
                                 }
