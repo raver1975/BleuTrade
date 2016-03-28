@@ -507,10 +507,12 @@ class Analyze {
                             profit *= tickerHM.get(g2 + "_" + "BTC").getAsk();
                         System.out.println(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
                         totprofit += profit;
-                        double total = hmminsize.get(h) * buyFactor;
-                        ;
+                        double rate=tickerHM.get(h).getAsk();
+                        double total = hmminsize.get(h) * buyFactor/rate;
                         if (!g2.equals("BTC"))
-                            total*= tickerHM.get(g2 + "_" + "BTC").getAsk();
+                            total=total/tickerHM.get(g2+"_BTC").getAsk();
+                        if (total*rate < 000.00000001d) total = 000.00000001d/rate;
+                        if (total<000.00000001d)total=000.00000001d;
                         boolean flag = false;
                         if (profit * bitcoinprice >= 0.01d) goodtoorder.add(h);
                         if (profit * bitcoinprice >= sellabove) {
@@ -542,8 +544,10 @@ class Analyze {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 double total = (mk.getMinTradeSize() * buyFactor)/rate;
+                                if (total*rate < 000.00000001d) total = 000.00000001d/rate;
+                                if (total<000.00000001d)total=000.00000001d;
                                 if (!mk.getBaseCurrency().equals("BTC"))
-                                    total=total*tickerHM.get(market).getAsk()/tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
+                                    total=total/tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 if (donotbuy.contains(market)) {
                                     System.out.println("Do not buy!");
@@ -551,13 +555,13 @@ class Analyze {
                                 }
 
                                 if (total > b.getAvailable()) {
+                                    System.out.println("Insufficient Funds:  asking for="+total+"\thave="+b.getAvailable());
                                     continue top;
                                 }
 
                                 System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
                                 donotsell.add(mk.getMarketName());
-                                if (total*rate < 000.00000001d) total = 000.00000001d/rate;
-                                if (total<000.00000001d)total=000.00000001d;
+
                                 Order o = buy("buy " + mk.getMarketName() + " " + dfcoins.format(total));
                                 if (o != null) history.add(o);
                                 if (o != null) {
@@ -578,7 +582,7 @@ class Analyze {
 
 //                    sell high
                     System.out.println("----------------------------");
-                    System.out.println("sell high");
+                    System.out.println("sell high again");
                     for (String s : negativeCyclesHigh) {
 
                         String[] split = s.split("\t");
@@ -595,7 +599,7 @@ class Analyze {
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 double total = mk.getMinTradeSize() * buyFactor/rate;
                                 if (!mk.getBaseCurrency().equals("BTC"))
-                                    total=total*tickerHM.get(market).getAsk()/tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
+                                    total=total/tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
                                 if (b.getAvailable() < total) {
                                     continue top;
                                 }
