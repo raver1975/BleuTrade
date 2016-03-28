@@ -540,7 +540,7 @@ class Analyze {
                         for (Market mk : markets) {
                             if (mk.getMarketName().equals(market)) {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                double total = (mk.getMinTradeSize()*buyFactor)/rate;
+                                double total = (mk.getMinTradeSize()*buyFactor);
                                 if (!mk.getBaseCurrency().equals("BTC"))total*=tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
 
@@ -591,7 +591,7 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
 
-                                double total = mk.getMinTradeSize()*buyFactor/rate;
+                                double total = mk.getMinTradeSize()*buyFactor;
                                 if (!mk.getBaseCurrency().equals("BTC"))total*=tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
                                 if (b.getAvailable() < total) {
                                     continue top;
