@@ -29,8 +29,8 @@ class Analyze {
     HashMap<String, TickerData> maxhm = new HashMap<String, TickerData>();
     HashMap<String, TickerData> minhm = new HashMap<String, TickerData>();
 
-    DecimalFormat dfdollars = new DecimalFormat("+000.00;-000.00");
-    static DecimalFormat dfcoins = new DecimalFormat("+000.00000000;-000.00000000");
+    DecimalFormat dfdollars = new DecimalFormat("+000.00(00);-000.00");
+    static DecimalFormat dfcoins = new DecimalFormat("+0000.00000000;-0000.00000000");
     private ArrayList<Balance> balance;
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
@@ -67,7 +67,6 @@ class Analyze {
 //                                System.out.println("buying: " + market + "\t" + dfcoins.format(rate) + "\t#" + dfcoins.format(quantity));
                             try {
                                 final long id = Http.buyselllimit(market, rate, quantity, true);
-                                System.out.println("order number=" + id);
 
                                 if (id != -1)
                                     top:
@@ -83,10 +82,7 @@ class Analyze {
                                                 Thread.sleep(1000);
                                             }
                                 if (id == -1) return null;
-                                System.out.println("Canceling order " + id);
-                                System.out.println("success = " + Http.cancel(id));
-
-
+                                System.out.println("Canceling order:" + id+"\t"+Http.cancel(id));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
