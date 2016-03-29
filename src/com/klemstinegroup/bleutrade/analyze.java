@@ -35,7 +35,7 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 20;
-    private static final double sellabove = 0.10d;
+    private static final double sellabove = 0.05d;
     private static final double donotbuybelow = -.02d;
     private double buyFactor = 2d;
     private double bitcoinprice;
@@ -494,6 +494,7 @@ class Analyze {
                     HashSet<String> goodtoorder = new HashSet<String>();
                     HashSet<String> donotsell = new HashSet<String>();
                     HashSet<String> donotbuy = new HashSet<String>();
+                    ArrayList<String> sortedout=new ArrayList<String>();
                     double totprofit = 0d;
                     for (String h : hmquantity.keySet()) {
                         double hmqu = hmquantity.get(h);
@@ -506,7 +507,7 @@ class Analyze {
                         String g2 = h.substring(h.indexOf('_') + 1);
                         if (!g2.equals("BTC"))
                             profit *= tickerHM.get(g2 + "_" + "BTC").getAsk();
-                        System.out.println(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
+                        sortedout.add(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
                         totprofit += profit;
                         double rate=tickerHM.get(h).getAsk();
                         double total = hmminsize.get(h) * buyFactor/rate;
@@ -528,6 +529,8 @@ class Analyze {
 //                            goodtoorder.add(h);
 //                        }
                     }
+                    Collections.sort(sortedout);
+                    for (String s:sortedout) System.out.println(s);
                     System.out.println(dfcoins.format(totprofit) + "\t$" + dfdollars.format(totprofit * bitcoinprice) + "\t" + "total");
 
                     System.out.println("----------------------------");
