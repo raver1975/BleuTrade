@@ -35,7 +35,7 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 20;
-    private static final double sellabove = 0.05d;
+    private static final double sellabove = 5.00d;
     private static final double donotbuybelow = -.02d;
     private double buyFactor = 2d;
     private double bitcoinprice;
@@ -508,7 +508,7 @@ class Analyze {
                         double rate=tickerHM.get(h).getAsk();
                         double total = hmminsize.get(h) * buyFactor/rate;
                         if (!g2.equals("BTC"))
-                            total=total*tickerHM.get(g2+"_BTC").getAsk();
+                            total*=tickerHM.get(g2+"_BTC").getAsk();
                         boolean flag = false;
                         if (profit * bitcoinprice >= 0.01d) goodtoorder.add(h);
                         if (profit * bitcoinprice >= sellabove) {
@@ -598,7 +598,7 @@ class Analyze {
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 double total = mk.getMinTradeSize() * buyFactor/rate;
                                 if (!mk.getBaseCurrency().equals("BTC"))
-                                    total=total*tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
+                                    total*=tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
                                 if (b.getAvailable() < total*rate) {
                                     System.out.println("Insufficient Funds:  asking for="+dfcoins.format(total)+"\thave="+dfcoins.format(b.getAvailable()));
                                     continue top;
