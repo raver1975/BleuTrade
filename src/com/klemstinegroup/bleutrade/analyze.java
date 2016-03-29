@@ -29,7 +29,7 @@ class Analyze {
     HashMap<String, TickerData> maxhm = new HashMap<String, TickerData>();
     HashMap<String, TickerData> minhm = new HashMap<String, TickerData>();
 
-    DecimalFormat dfdollars = new DecimalFormat("+000.00(00);-000.00");
+    DecimalFormat dfdollars = new DecimalFormat("+000.00);-000.00");
     static DecimalFormat dfcoins = new DecimalFormat("+0000.00000000;-0000.00000000");
     private ArrayList<Balance> balance;
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
