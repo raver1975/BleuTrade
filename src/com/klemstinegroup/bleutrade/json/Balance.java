@@ -11,7 +11,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.json.JSONObject;
 
 @Generated("org.jsonschema2pojo")
-public class Balance {
+public class Balance  implements Comparable<Balance> {
 
     @SerializedName("Currency")
     @Expose
@@ -35,7 +35,7 @@ public class Balance {
     /**
      * No args constructor for use in serialization
      */
-    public Balance() {
+    public Balance(){
     }
     public static Balance fromJson(JSONObject json) {
         return new Gson().fromJson(json.toString(), Balance.class);
@@ -195,4 +195,8 @@ public class Balance {
         return new EqualsBuilder().append(Currency, rhs.Currency).append(Balance, rhs.Balance).append(Available, rhs.Available).append(Pending, rhs.Pending).append(CryptoAddress, rhs.CryptoAddress).append(IsActive, rhs.IsActive).isEquals();
     }
 
+    @Override
+    public int compareTo(Balance o) {
+        return 0;
+    }
 }
