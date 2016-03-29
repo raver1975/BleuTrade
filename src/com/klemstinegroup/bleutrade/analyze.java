@@ -545,8 +545,8 @@ class Analyze {
                                 double total = (mk.getMinTradeSize() * buyFactor)/rate;
                                 //if (total*rate < 000.00000001d) total = 000.00000001d/rate;
 
-                                if (!mk.getBaseCurrency().equals("BTC"))
-                                    total=total*rate/tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
+//                                if (!mk.getBaseCurrency().equals("BTC"))
+//                                    total=total*rate/tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
                                // if (total*rate<mk.getMinTradeSize() )total=mk.getMinTradeSize() /rate;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 if (donotbuy.contains(market)) {
