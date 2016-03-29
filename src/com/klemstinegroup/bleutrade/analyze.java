@@ -37,7 +37,8 @@ class Analyze {
     private static int wait = 20;
     private static final double sellabove = 0.02d;
     private static final double donotbuybelow = -.01d;
-    private double buyFactor = 1d;
+    private double buyFactor = 2d;
+    private double bitcoinprice;
 //    private double buysellfactor=10;
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
@@ -431,7 +432,6 @@ class Analyze {
                     //Collections.reverse(negativeCycles);
 
 
-                    double bitcoinprice = 0;
                     try {
                         bitcoinprice = Http.bitcoinPrice();
                     } catch (Exception e) {
@@ -470,7 +470,7 @@ class Analyze {
                         e.printStackTrace();
                     }
                     System.out.println("----------------------------");
-                    System.out.println("sell high");
+                    System.out.println("sell high #1");
                     HashMap<String, Double> hmprice = new HashMap<String, Double>();
                     HashMap<String, Double> hmquantity = new HashMap<String, Double>();
                     HashMap<String, Double> hmminsize = new HashMap<String, Double>();
@@ -510,7 +510,7 @@ class Analyze {
                         double rate=tickerHM.get(h).getAsk();
                         double total = hmminsize.get(h) * buyFactor/rate;
                         if (!g2.equals("BTC"))
-                            total=total/tickerHM.get(g2+"_BTC").getAsk();
+                            total=total*tickerHM.get(g2+"_BTC").getAsk();
                         if (total*rate < 000.00000001d) total = 000.00000001d/rate;
                         if (total<000.00000001d)total=000.00000001d;
                         boolean flag = false;
