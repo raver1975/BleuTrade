@@ -186,6 +186,7 @@ public class Http {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (json==null)return null;
 
         boolean success = json.getBoolean("success");
         if (!success) System.out.println(json.getString("message"));
