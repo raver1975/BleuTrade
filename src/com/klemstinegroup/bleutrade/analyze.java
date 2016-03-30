@@ -528,7 +528,7 @@ class Analyze {
                         if (!g2.equals("BTC"))
                             total*=tickerHM.get(g2+"_BTC").getAsk();
                         boolean flag = false;
-                        if (profit * bitcoinprice >= 0.01d) goodtoorder.add(h);
+//                        if (profit * bitcoinprice >= 0.01d) goodtoorder.add(h);
                         if (profit * bitcoinprice >= sellabove) {
                             goodtoorder.add(h);
                             Order o = sell("sell " + h + " " + dfcoins.format(total));
