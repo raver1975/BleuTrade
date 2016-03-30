@@ -586,7 +586,7 @@ class Analyze {
                     }
 
 
-//                    sell high
+//                    sell high #2
                     System.out.println("----------------------------");
                     System.out.println("sell high #2");
                     for (String s : negativeCyclesHigh) {
@@ -603,7 +603,7 @@ class Analyze {
                                 }
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
-                                double total = mk.getMinTradeSize() * buyFactor/rate;
+                                double total = (mk.getMinTradeSize() * buyFactor)/rate;
 //                                if (!mk.getBaseCurrency().equals("BTC"))
 //                                    total*=tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
                                 if (b.getAvailable() < total) {
