@@ -29,13 +29,13 @@ class Analyze {
     HashMap<String, TickerData> maxhm = new HashMap<String, TickerData>();
     HashMap<String, TickerData> minhm = new HashMap<String, TickerData>();
 
-    DecimalFormat dfdollars = new DecimalFormat("+000.00);-000.00");
+    DecimalFormat dfdollars = new DecimalFormat("+000.00;-000.00");
     static DecimalFormat dfcoins = new DecimalFormat("+0000.00000000;-0000.00000000");
     private ArrayList<Balance> balance;
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 20;
-    private static final double sellabove = 5.00d;
+    private static final double sellabove = .20d;
     private static final double donotbuybelow = -.02d;
     private double buyFactor = 2d;
     private double bitcoinprice;
@@ -451,8 +451,15 @@ class Analyze {
                                 }
                                 for (int i = saved.size() - 1; i > -1; i--) {
                                     TickerData td = saved.get(i);
-                                    if (td.coin.equals(b.getCurrency()) && td.base.equals("BTC")) {
-                                        System.out.print("\t" + dfcoins.format(td.ask * b.getAvailable()) + "\t$" + dfdollars.format(td.ask * b.getAvailable() * bitcoinprice));
+
+                                    if (td.coin.equals(b.getCurrency())) {
+                                        double coinshave=b.getAvailable();
+                                        double coinrate=td.ask;
+                                        if(!td.base.equals("BTC")){
+//                                            coinrate*=tickerHM.get(td.base+"_"+"BTC").getBid();
+                                            continue;
+                                        }
+                                        System.out.print("\t" + dfcoins.format(td.ask * coinshave) + "\t$" + dfdollars.format(coinshave*coinrate* bitcoinprice));
                                         bittot += td.ask * b.getAvailable();
                                         break;
                                     }
@@ -581,7 +588,7 @@ class Analyze {
 
 //                    sell high
                     System.out.println("----------------------------");
-                    System.out.println("sell high again");
+                    System.out.println("sell high #2");
                     for (String s : negativeCyclesHigh) {
 
                         String[] split = s.split("\t");
@@ -597,10 +604,10 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 double total = mk.getMinTradeSize() * buyFactor/rate;
-                                if (!mk.getBaseCurrency().equals("BTC"))
-                                    total*=tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
-                                if (b.getAvailable() < total*rate) {
-                                    System.out.println("Insufficient Funds:  asking for="+dfcoins.format(total)+"\thave="+dfcoins.format(b.getAvailable()));
+//                                if (!mk.getBaseCurrency().equals("BTC"))
+//                                    total*=tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
+                                if (b.getAvailable() < total) {
+//                                    System.out.println("Insufficient Funds:  asking for="+dfcoins.format(total)+"\thave="+dfcoins.format(b.getAvailable()));
                                     continue top;
                                 }
                                 if (goodtoorder.contains(market)) {
