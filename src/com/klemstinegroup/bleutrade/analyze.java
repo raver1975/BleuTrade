@@ -625,7 +625,7 @@ class Analyze {
 //                                if (!mk.getBaseCurrency().equals("BTC"))
 //                                    total*=tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
 //                                if (total*rate<0.00000001d)total/=rate;
-                                if (b.getAvailable() < total) {
+                                if (b.getAvailable()< total) {
                                     System.out.println("Insufficient Funds: "+mk.getMarketName()+" \tasking for="+dfcoins.format(total)+"\thave="+dfcoins.format(b.getAvailable()));
                                     continue top;
                                 }
