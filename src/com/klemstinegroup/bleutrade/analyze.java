@@ -565,6 +565,8 @@ class Analyze {
                                 if (mk.getMarketName().equals(market)) {
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                     double total = (mk.getMinTradeSize() * buyFactor) / rate;
+                                    if (!mk.getBaseCurrency().equals("BTC"))
+                                        total*=tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
                                     //if (total*rate < 000.00000001d) total = 000.00000001d/rate;
 
 //                                if (!mk.getBaseCurrency().equals("BTC"))
