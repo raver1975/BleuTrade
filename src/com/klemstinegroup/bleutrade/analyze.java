@@ -575,7 +575,7 @@ class Analyze {
                                         System.out.println("Do not buy!");
                                         continue top;
                                     }
-
+                                    if (total<=0000.00000001d)total=0000.00000001d;
                                     if (total * rate > b.getAvailable()) {
                                         System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                         continue top;
