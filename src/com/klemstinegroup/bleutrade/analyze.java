@@ -37,7 +37,7 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 20;
-    private static final double sellabove = 1.25d;
+    private static final double sellabove = 0.10d;
     //private static final double donotbuybelow = -.02d;
     private double buyFactor = 2d;
     private Double sellFactor=2d;
