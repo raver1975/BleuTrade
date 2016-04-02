@@ -40,8 +40,8 @@ class Analyze {
     private static int wait = 20;
     private static final double sellabove = 0.20d;
     private static final double donotbuybelow = -.02d;
-    private double buyFactor = 10d;
-    private Double sellFactor = 10d;
+    private double buyFactor = 2d;
+    private Double sellFactor = 2d;
 
     boolean skipBuy = false;
 
@@ -577,7 +577,7 @@ class Analyze {
                                         System.out.println("Do not buy!");
                                         continue top;
                                     }
-                                    if (total <= 0000.00000001d) total = 0000.00000001d;
+                                    if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*buyFactor;
                                     if (total * rate > b.getAvailable()) {
                                         System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                         continue top;
@@ -633,7 +633,7 @@ class Analyze {
                                 double total = mk.getMinTradeSize() * sellFactor / rate;
                                 if (!mk.getBaseCurrency().equals("BTC"))
                                     total *= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
-
+                                if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*sellFactor;
                                 if (b.getAvailable() < total) {
                                     System.out.println("Insufficient Funds: " + mk.getMarketName() + " \tasking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                     continue top;
