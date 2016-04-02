@@ -565,8 +565,8 @@ class Analyze {
                                 if (mk.getMarketName().equals(market)) {
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                     double total = (mk.getMinTradeSize() * buyFactor) / rate;
-//                                    if (!mk.getBaseCurrency().equals("BTC"))
-//                                        total/=tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
+                                    if (!mk.getBaseCurrency().equals("BTC"))
+                                        total*=tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
                                     //if (total*rate < 000.00000001d) total = 000.00000001d/rate;
 
 //                                if (!mk.getBaseCurrency().equals("BTC"))
@@ -577,7 +577,7 @@ class Analyze {
                                         System.out.println("Do not buy!");
                                         continue top;
                                     }
-                                    if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*buyFactor;
+                                    //if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*buyFactor;
                                     if (total * rate > b.getAvailable()) {
                                         System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                         continue top;
