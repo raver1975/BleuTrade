@@ -577,7 +577,7 @@ class Analyze {
                                         System.out.println("Do not buy!");
                                         continue top;
                                     }
-                                    if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*buyFactor;
+                                    //if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*buyFactor;
                                     if (total * rate > b.getAvailable()) {
                                         System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                         continue top;
@@ -633,7 +633,7 @@ class Analyze {
                                 double total = mk.getMinTradeSize() * sellFactor / rate;
                                 if (!mk.getBaseCurrency().equals("BTC"))
                                     total *= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
-                                if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*sellFactor;
+                                //if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*sellFactor;
                                 if (b.getAvailable() < total) {
                                     System.out.println("Insufficient Funds: " + mk.getMarketName() + " \tasking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                     continue top;
