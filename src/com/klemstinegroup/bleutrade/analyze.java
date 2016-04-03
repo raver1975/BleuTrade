@@ -178,6 +178,17 @@ class Analyze {
                         if (line.startsWith("sell ")) {
                             sell(line);
                         }
+                        if (line.startsWith("reset")){
+                            String market=line.substring(6);
+
+                            ArrayList<Order> remove=new ArrayList<Order>();
+                            for (Order o:history){
+                               //System.out.println(":"+market+":"+o.getExchange());
+                                if (o.getExchange().equals(market))remove.add(o);
+                            }
+                            for (Order o:remove)history.remove(o);
+                            System.out.println("Removed all "+market);
+                        }
 
 
                     } catch (IOException e) {
@@ -574,8 +585,10 @@ class Analyze {
                                         continue top;
                                     }
                                     //if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*buyFactor;
-                                    if (total <= 0000.00000001) total = 0000.00000001;
-                                    if (total > b.getAvailable()) {
+//                                    if (total <= 0000.00000001) total = 0000.00000001;
+                                    //min volume
+                                    while(total*rate<= 0.00001)total*=1.1d;
+                                    if (total*rate > b.getAvailable()) {
                                         System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                         continue top;
                                     }
