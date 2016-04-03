@@ -564,22 +564,17 @@ class Analyze {
                             for (Market mk : markets) {
                                 if (mk.getMarketName().equals(market)) {
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                    double total = (mk.getMinTradeSize()) / rate;
-                                    total*=buyFactor;
+                                    double total = (mk.getMinTradeSize());
+                                    total *= buyFactor;
                                     if (!mk.getBaseCurrency().equals("BTC"))
-                                        total/=tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
-                                    //if (total*rate < 000.00000001d) total = 000.00000001d/rate;
-
-//                                if (!mk.getBaseCurrency().equals("BTC"))
-//                                    total=total*rate/tickerHM.get(mk.getBaseCurrency()+"_BTC").getAsk();
-                                    // if (total*rate<mk.getMinTradeSize() )total=mk.getMinTradeSize() /rate;
+                                        total /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
                                     Balance b = balanceHM.get(mk.getBaseCurrency());
                                     if (donotbuy.contains(market)) {
                                         System.out.println("Do not buy!");
                                         continue top;
                                     }
                                     //if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*buyFactor;
-                                    if (total<=0000.00000001)total=0000.00000001;
+                                    if (total <= 0000.00000001) total = 0000.00000001;
                                     if (total > b.getAvailable()) {
                                         System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                         continue top;
@@ -713,7 +708,7 @@ class Analyze {
 //                        else
                         history.add(bb);
                     }
-                   // System.out.println("-----------");
+                    // System.out.println("-----------");
 
 
                     try {
