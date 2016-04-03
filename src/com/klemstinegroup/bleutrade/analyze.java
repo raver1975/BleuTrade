@@ -608,7 +608,7 @@ class Analyze {
 //                                    if (total <= 0000.00000001) total = 0000.00000001;
                                     //min volume
                                     while (total * rate <= 0.00001d) total *= 1.1d;
-                                    if (total > b.getAvailable()) {
+                                    if (total*rate > b.getAvailable()) {
                                         System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                         continue top;
                                     }
