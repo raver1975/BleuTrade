@@ -587,9 +587,9 @@ class Analyze {
                                     total *= buyFactor;
                                     Balance b = balanceHM.get(mk.getBaseCurrency());
                                     while (total * rate <= 0.00001d) total *= 1.1d;
-                                    if (b.getAvailable()*rate>total) {
+                                    if (b.getAvailable()>total*rate) {
                                         Order o1 = buy("buy BLEU_BTC " + dfcoins.format(total));
-                                        if (o1 != null) history.add(o1);
+                                        //if (o1 != null) history.add(o1);
                                     }
                                 }
 
