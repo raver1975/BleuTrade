@@ -659,12 +659,13 @@ class Analyze {
                                 double total = mk.getMinTradeSize() * sellFactor / rate;
 
                                 while (total * rate <= 0.00001d) total *= 1.1d;
-                                if (b.getAvailable() < total) {
-                                    System.out.println("Insufficient Funds: " + mk.getMarketName() + " \tasking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
-                                    continue top;
-                                }
+
                                 if (goodtoorder.contains(market)) {
                                     System.out.println(s);
+                                    if (b.getAvailable() < total*rate) {
+                                        System.out.println("Insufficient Funds: " + mk.getMarketName() + " \tasking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
+                                        continue top;
+                                    }
                                     System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(rate * total) + " " + mk.getBaseCurrencyLong() + "\t" + "have:" + dfcoins.format(b.getAvailable()));
                                     Order o = sell("sell " + mk.getMarketName() + " " + dfcoins.format(total));
                                     if (o != null) {
