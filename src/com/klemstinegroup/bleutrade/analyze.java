@@ -38,10 +38,10 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 20;
-    private static final double sellabove = 0.20d;
+    private static final double sellabove = 1.00d;
     private static final double donotbuybelow = -.02d;
-    private double buyFactor = 2d;
-    private Double sellFactor = 2d;
+    private double buyFactor = 4d;
+//    private Double sellFactor = 2d;
 
     boolean skipBuy = false;
 
@@ -536,19 +536,19 @@ class Analyze {
                             profit *= tickerHM.get(g2 + "_" + "BTC").getAsk();
                         sortedout.add(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
                         totprofit += profit;
-                        double rate = tickerHM.get(h).getAsk();
-                        double total = hmminsize.get(h) * sellFactor / rate;
-                        if (!g2.equals("BTC"))
-                            total *= tickerHM.get(g2 + "_BTC").getAsk();
+                        //double rate = tickerHM.get(h).getAsk();
+                        //double total = hmminsize.get(h) * sellFactor / rate;
+                        //if (!g2.equals("BTC"))
+                        //    total *= tickerHM.get(g2 + "_BTC").getAsk();
                         boolean flag = false;
 //                        if (profit * bitcoinprice >= 0.01d) goodtoorder.add(h);
                         if (profit * bitcoinprice >= sellabove) {
                             goodtoorder.add(h);
-                            Order o = sell("sell " + h + " " + dfcoins.format(total));
-                            if (o != null) {
-                                o.setQuantity(-o.getQuantity());
-                                history.add(o);
-                            }
+                            //Order o = sell("sell " + h + " " + dfcoins.format(total));
+                            //if (o != null) {
+                            //    o.setQuantity(-o.getQuantity());
+                            //    history.add(o);
+                            //}
                             flag = true;
                         }
                         if (profit * bitcoinprice <= donotbuybelow || flag) donotbuy.add(h);
@@ -656,21 +656,25 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 if (!mk.getBaseCurrency().equals("BTC"))
                                     rate /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
-                                double total = mk.getMinTradeSize() * sellFactor / rate;
+//                                double total = mk.getMinTradeSize() * sellFactor / rate;
 
-                                while (total * rate <= 0.00001d) total *= 1.1d;
+//                                while (total * rate <= 0.00001d) total *= 1.1d;
 
                                 if (goodtoorder.contains(market)) {
                                     System.out.println(s);
-                                    if (b.getAvailable() < total) {
-                                        System.out.println("Insufficient Funds: " + mk.getMarketName() + " \tasking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
-                                        continue top;
-                                    }
-                                    System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(rate * total) + " " + mk.getBaseCurrencyLong() + "\t" + "have:" + dfcoins.format(b.getAvailable()));
-                                    Order o = sell("sell " + mk.getMarketName() + " " + dfcoins.format(total));
-                                    if (o != null) {
-                                        o.setQuantity(-o.getQuantity());
-                                        history.add(o);
+//                                    if (b.getAvailable() < total) {
+//                                        System.out.println("Insufficient Funds: " + mk.getMarketName() + " \tasking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
+//                                        continue top;
+//                                    }
+                                    if (b.getAvailable()>mk.getMinTradeSize()) {
+                                        double total=b.getAvailable();
+
+                                        System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(rate * total) + " " + mk.getBaseCurrencyLong() + "\t" + "have:" + dfcoins.format(b.getAvailable()));
+                                        Order o = sell("sell " + mk.getMarketName() + " " + dfcoins.format(total));
+                                        if (o != null) {
+                                            o.setQuantity(-o.getQuantity());
+                                            history.add(o);
+                                        }
                                     }
                                 }
                             }
