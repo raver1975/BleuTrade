@@ -582,14 +582,12 @@ class Analyze {
                                 if (!buyblueonce && mk.getMarketName().equals("BLEU_BTC")) {
                                     buyblueonce = true;
                                     System.out.println("----BUY BLEU-------");
-
-
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                     double total = (mk.getMinTradeSize());
                                     total *= buyFactor;
                                     Balance b = balanceHM.get(mk.getBaseCurrency());
                                     while (total * rate <= 0.00001d) total *= 1.1d;
-                                    if (b.getAvailable()>total) {
+                                    if (b.getAvailable()*rate>total) {
                                         Order o1 = buy("buy BLEU_BTC " + dfcoins.format(total));
                                         if (o1 != null) history.add(o1);
                                     }
@@ -660,7 +658,7 @@ class Analyze {
                                     rate /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
                                 double total = mk.getMinTradeSize() * sellFactor / rate;
 
-//                                while (total * rate <= 0.00001d) total *= 1.1d;
+                                while (total * rate <= 0.00001d) total *= 1.1d;
                                 if (b.getAvailable() < total) {
                                     System.out.println("Insufficient Funds: " + mk.getMarketName() + " \tasking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                     continue top;
