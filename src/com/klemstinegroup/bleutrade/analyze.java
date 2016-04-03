@@ -582,8 +582,17 @@ class Analyze {
                                 if (!buyblueonce && mk.getMarketName().equals("BLEU_BTC")) {
                                     buyblueonce = true;
                                     System.out.println("----BUY BLEU-------");
-                                    Order o1 = buy("buy BLEU_BTC " + dfcoins.format(2d*mk.getMinTradeSize()));
-                                    if (o1 != null) history.add(o1);
+
+
+                                    double rate = tickerHM.get(mk.getMarketName()).getAsk();
+                                    double total = (mk.getMinTradeSize());
+                                    total *= buyFactor;
+                                    Balance b = balanceHM.get(mk.getBaseCurrency());
+                                    while (total * rate <= 0.00001d) total *= 1.1d;
+                                    if (b.getAvailable()>total) {
+                                        Order o1 = buy("buy BLEU_BTC " + dfcoins.format(total));
+                                        if (o1 != null) history.add(o1);
+                                    }
                                 }
 
                                 if (mk.getMarketName().equals(market)) {
