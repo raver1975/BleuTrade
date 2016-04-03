@@ -472,15 +472,15 @@ class Analyze {
 
                                     if (td.coin.equals(b.getCurrency())) {
                                         double coinshave = b.getAvailable();
-                                        double coinrate = td.ask;
+                                        double coinrate = td.bid;
                                         if (!td.base.equals("BTC")) {
 //                                            coinrate*=tickerHM.get(td.base+"_"+"BTC").getBid();
                                             continue;
                                         }
-                                        System.out.print("\t" + dfcoins.format(td.ask * coinshave) + "\t$" + dfdollars.format(coinshave * coinrate * bitcoinprice));
-                                        bittot += td.ask * b.getAvailable();
+                                        System.out.print("\t" + dfcoins.format(td.bid * coinshave) + "\t$" + dfdollars.format(coinshave * coinrate * bitcoinprice));
+                                        bittot += td.bid * b.getAvailable();
                                         if (b.getCurrency().equals("BLEU")) {
-                                            bl = b.getAvailable() * td.ask;
+                                            bl = b.getAvailable() * td.bid;
                                         }
                                         break;
                                     }
