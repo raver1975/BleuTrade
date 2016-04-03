@@ -662,7 +662,7 @@ class Analyze {
 
                                 if (goodtoorder.contains(market)) {
                                     System.out.println(s);
-                                    if (b.getAvailable() < total*rate) {
+                                    if (b.getAvailable() < total) {
                                         System.out.println("Insufficient Funds: " + mk.getMarketName() + " \tasking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                         continue top;
                                     }
