@@ -580,7 +580,7 @@ class Analyze {
                                     }
                                     //if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*buyFactor;
                                     if (total<=0000.00000001)total=0000.00000001;
-                                    if (total * rate > b.getAvailable()) {
+                                    if (total > b.getAvailable()) {
                                         System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                         continue top;
                                     }
