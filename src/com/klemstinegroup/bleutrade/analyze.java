@@ -41,7 +41,7 @@ class Analyze {
     private static final double sellabove = 0.20d;
     private static final double donotbuybelow = -.02d;
     private double buyFactor = 2d;
-    private Double sellFactor = 1d;
+    private Double sellFactor = 2d;
 
     boolean skipBuy = false;
 
@@ -566,6 +566,10 @@ class Analyze {
                     if (!skipBuy) {
                         System.out.println("----------------------------");
                         System.out.println("buy low");
+
+
+
+                        boolean buyblueonce = false;
                         for (String s : negativeCyclesLow) {
                             System.out.println(s);
                             String[] split = s.split("\t");
@@ -575,14 +579,14 @@ class Analyze {
 
                             top:
                             for (Market mk : markets) {
-                                if (mk.getMarketName().equals("BLUE_BTC")) {
-                                    Order o = buy("buy BLEU_BTC " + dfcoins.format(mk.getMinTradeSize()));
-                                    if (o != null) history.add(o);
+                                if (!buyblueonce && mk.getMarketName().equals("BLEU_BTC")) {
+                                    buyblueonce = true;
                                     System.out.println("----BUY BLEU-------");
+                                    Order o1 = buy("buy BLEU_BTC " + dfcoins.format(2d*mk.getMinTradeSize()));
+                                    if (o1 != null) history.add(o1);
                                 }
-                                if (mk.getMarketName().equals(market)) {
-                                    //buy BLEU
 
+                                if (mk.getMarketName().equals(market)) {
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                     double total = (mk.getMinTradeSize());
                                     total *= buyFactor;
@@ -645,7 +649,7 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 if (!mk.getBaseCurrency().equals("BTC"))
                                     rate /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
-                                double total = mk.getMinTradeSize() * sellFactor/rate;
+                                double total = mk.getMinTradeSize() * sellFactor / rate;
 
 //                                while (total * rate <= 0.00001d) total *= 1.1d;
                                 if (b.getAvailable() < total) {
