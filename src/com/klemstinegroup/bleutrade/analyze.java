@@ -579,7 +579,7 @@ class Analyze {
 
                             top:
                             for (Market mk : markets) {
-                                if (!buyblueonce && mk.getMarketName().equals("BLEU_BTC")) {
+                                if (!buyblueonce &&market.equals("BLEU_BTC")&& mk.getMarketName().equals("BLEU_BTC")) {
                                     buyblueonce = true;
                                     System.out.println("----BUY BLEU-------");
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
