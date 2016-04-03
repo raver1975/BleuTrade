@@ -489,8 +489,9 @@ class Analyze {
                                 System.out.println();
                             }
                         }
-                        System.out.println("  TOT" + "\t--------------\t" + dfcoins.format(bittot) + "\t$" + dfdollars.format(bittot * bitcoinprice));
                         System.out.println("  TOT-B" + "\t--------------\t" + dfcoins.format(bittot - bl) + "\t$" + dfdollars.format((bittot - bl) * bitcoinprice));
+                        System.out.println("  TOT" + "\t--------------\t" + dfcoins.format(bittot) + "\t$" + dfdollars.format(bittot * bitcoinprice));
+
 
                     } catch (Exception e) {
                         e.printStackTrace();
