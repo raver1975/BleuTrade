@@ -80,6 +80,8 @@ class Analyze {
                                                 for (Order o : orders) {
                                                     if (o.getOrderId().equals(id + "")) {
                                                         System.out.println("order successful! " + id);
+                                                        history.add(o);
+                                                        Serializer.saveHistory(history);
 //                                                                refresh = true;
                                                         return o;
                                                     }
@@ -112,6 +114,7 @@ class Analyze {
             System.out.println("error args=" + split.length);
         } else {
             String market = split[1];
+            if (market.contains("BLEU"))return null;
             double quantity = Double.parseDouble(split[2]);
             for (Market mk : markets) {
                 if (mk.getMarketName().equals(market)) {
@@ -133,6 +136,9 @@ class Analyze {
                                             if (o.getOrderId().equals(id + "")) {
                                                 System.out.println("order successful!");
 //                                                        refresh = true;
+                                                o.setQuantity(-o.getQuantity());
+                                                history.add(o);
+                                                Serializer.saveHistory(history);
                                                 return o;
                                             }
                                         }
@@ -187,6 +193,11 @@ class Analyze {
                                 if (o.getExchange().equals(market)) remove.add(o);
                             }
                             for (Order o : remove) history.remove(o);
+                            try {
+                                Serializer.saveHistory(history);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                             System.out.println("Removed all " + market);
                         }
 
@@ -545,9 +556,6 @@ class Analyze {
                         if (profit * bitcoinprice >= sellabove) {
                             goodtoorder.add(h);
                             //Order o = sell("sell " + h + " " + dfcoins.format(total));
-                            //if (o != null) {
-                            //    o.setQuantity(-o.getQuantity());
-                            //    history.add(o);
                             //}
                             flag = true;
                         }
@@ -617,18 +625,6 @@ class Analyze {
                                     donotsell.add(mk.getMarketName());
 
                                     Order o = buy("buy " + mk.getMarketName() + " " + dfcoins.format(total));
-                                    if (o != null) history.add(o);
-                                    if (o != null) {
-                                        if (!o.getExchange().contains("BLEU")) {
-                                            if (o != null) history.add(o);
-                                            try {
-                                                Serializer.saveHistory(history);
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    }
-//                                }
                                 }
                             }
                         }
@@ -668,10 +664,10 @@ class Analyze {
                                     }
                                     System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(rate * total) + " " + mk.getBaseCurrencyLong() + "\t" + "have:" + dfcoins.format(b.getAvailable()));
                                     Order o = sell("sell " + mk.getMarketName() + " " + dfcoins.format(total));
-                                    if (o != null) {
-                                        o.setQuantity(-o.getQuantity());
-                                        history.add(o);
-                                    }
+//                                    if (o != null) {
+//                                        o.setQuantity(-o.getQuantity());
+//                                        history.add(o);
+//                                    }
                                 }
                             }
                         }
