@@ -38,7 +38,7 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 20;
-    private static final double sellabove = 1.00d;
+    private static final double sellabove = 0.20d;
     private static final double donotbuybelow = -.02d;
     private double buyFactor = 4d;
     private Double sellFactor = 2d;
@@ -585,9 +585,10 @@ class Analyze {
                             donotsell.add(market);
 
 
+                            Collections.shuffle(markets);
                             top:
                             for (Market mk : markets) {
-                                if (!buyblueonce &&market.equals("BLEU_BTC")&& mk.getMarketName().equals("BLEU_BTC")) {
+                                if (!buyblueonce &&mk.getMarketName().equals("BLEU_BTC")) {
                                     buyblueonce = true;
                                     System.out.println("----BUY BLEU-------");
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
@@ -615,8 +616,8 @@ class Analyze {
                                     //if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*buyFactor;
 //                                    if (total <= 0000.00000001) total = 0000.00000001;
                                     //min volume
-                                    while (total * rate <= 0.00001d) total *= 1.1d;
-                                    if (total*rate > b.getAvailable()) {
+                                    while (total * rate <= 0.00000001) total *= 1.1d;
+                                    if (total > b.getAvailable()) {
                                         System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                         continue top;
                                     }
