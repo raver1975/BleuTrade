@@ -16,6 +16,8 @@ hs_err_pid*
 HttpKeys.java
 
 /history.ser
+/backup_history.ser
+/backup_saved.ser
 /ivadb.script
 /ivadb.properties
 /ivadb.lck
