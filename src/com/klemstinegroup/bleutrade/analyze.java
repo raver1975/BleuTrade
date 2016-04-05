@@ -37,7 +37,7 @@ class Analyze {
     private ArrayList<Balance> balance;
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
-    private static int wait = 20;
+    private static int wait = 1;
     private static final double sellabove = 0.20d;
     private static final double donotbuybelow = -.02d;
     private double buyFactor = 4d;
@@ -578,6 +578,8 @@ class Analyze {
 
 
                         boolean buyblueonce = false;
+                        Collections.shuffle(markets);
+                        Collections.shuffle(negativeCyclesLow);
                         for (String s : negativeCyclesLow) {
                             System.out.println(s);
                             String[] split = s.split("\t");
@@ -585,7 +587,7 @@ class Analyze {
                             donotsell.add(market);
 
 
-                            Collections.shuffle(markets);
+
                             top:
                             for (Market mk : markets) {
                                 if (!buyblueonce &&mk.getMarketName().equals("BLEU_BTC")) {
@@ -595,11 +597,13 @@ class Analyze {
                                     double total = (mk.getMinTradeSize());
                                     total *= buyFactor;
                                     Balance b = balanceHM.get(mk.getBaseCurrency());
-                                    while (total * rate <= 0.00001d) total *= 1.1d;
+                                   while (total * rate <= 0.00001d) total *= 1.1d;
+                                    System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
                                     if (b.getAvailable()>total) {
                                         Order o1 = buy("buy BLEU_BTC " + dfcoins.format(total));
                                         //if (o1 != null) history.add(o1);
                                     }
+                                    else  System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                 }
 
                                 if (mk.getMarketName().equals(market)) {
