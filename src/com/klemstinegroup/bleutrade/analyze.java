@@ -599,7 +599,7 @@ class Analyze {
                                     Balance b = balanceHM.get(mk.getBaseCurrency());
                                    //while (total * rate <= 0.00001d) total *= 1.1d;
                                     System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
-                                    if (b.getAvailable()>total) {
+                                    if (b.getAvailable()>total*rate) {
                                         Order o1 = buy("buy BLEU_BTC " + dfcoins.format(total));
                                         //if (o1 != null) history.add(o1);
                                     }
@@ -621,7 +621,7 @@ class Analyze {
 //                                    if (total <= 0000.00000001) total = 0000.00000001;
                                     //min volume
                                     //while (total * rate <= 0.00001d) total *= 1.1d;
-                                    if (total > b.getAvailable()) {
+                                    if (total*rate > b.getAvailable()) {
                                         System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                         continue top;
                                     }
