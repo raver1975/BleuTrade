@@ -594,7 +594,7 @@ class Analyze {
                                     buyblueonce = true;
                                     System.out.println("----BUY BLEU-------");
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                    double total = (mk.getMinTradeSize());
+                                    double total = (mk.getMinTradeSize())/rate;
                                     total *= buyFactor;
                                     Balance b = balanceHM.get(mk.getBaseCurrency());
                                    //while (total * rate <= 0.00001d) total *= 1.1d;
@@ -608,7 +608,7 @@ class Analyze {
 
                                 if (mk.getMarketName().equals(market)) {
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                    double total = (mk.getMinTradeSize());
+                                    double total = (mk.getMinTradeSize())/rate;
                                     total *= buyFactor;
 //                                    if (!mk.getBaseCurrency().equals("BTC"))
 //                                        total *= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
