@@ -41,6 +41,7 @@ class Analyze {
     private static final double sellabove = 0.05d;
     private static final double donotbuybelow = -.02d;
     private double buyFactor = 1000d;
+    private double sellFactor=2d;
     boolean skipBuy = false;
 
 
@@ -659,9 +660,9 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
 //                                if (!mk.getBaseCurrency().equals("BTC"))
 //                                    rate /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
-                                double total = mk.getMinTradeSize();
+                                double total = mk.getMinTradeSize()/rate;
                                 while (total*rate<0.00000001d)total*=1.1d;
-                                total *= buyFactor;
+                                total *= sellFactor;
 
                                 if (goodtoorder.contains(market)) {
                                     System.out.println(s);
