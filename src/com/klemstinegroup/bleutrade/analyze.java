@@ -594,24 +594,24 @@ class Analyze {
                                     buyblueonce = true;
                                     System.out.println("----BUY BLEU-------");
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                    double total = (mk.getMinTradeSize())/rate;
+                                    double total = (mk.getMinTradeSize());
                                     total *= buyFactor;
                                     Balance b = balanceHM.get(mk.getBaseCurrency());
                                    //while (total * rate <= 0.00001d) total *= 1.1d;
                                     System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
-                                    if (b.getAvailable()>total*rate) {
+//                                    if (b.getAvailable()>total*rate) {
                                         Order o1 = buy("buy BLEU_BTC " + dfcoins.format(total));
                                         //if (o1 != null) history.add(o1);
-                                    }
-                                    else  System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
+//                                    }
+//                                    else  System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                                 }
 
                                 if (mk.getMarketName().equals(market)) {
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
-                                    double total = (mk.getMinTradeSize())/rate;
+                                    double total = (mk.getMinTradeSize());
                                     total *= buyFactor;
 //                                    if (!mk.getBaseCurrency().equals("BTC"))
-//                                        total *= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
+//                                        total /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
                                     Balance b = balanceHM.get(mk.getBaseCurrency());
                                     if (donotbuy.contains(market)) {
                                         System.out.println("Do not buy!");
@@ -621,13 +621,13 @@ class Analyze {
 //                                    if (total <= 0000.00000001) total = 0000.00000001;
                                     //min volume
                                     //while (total * rate <= 0.00001d) total *= 1.1d;
-                                    if (total*rate > b.getAvailable()) {
-                                        System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
-                                        continue top;
-                                    }
-
                                     System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
-                                    donotsell.add(mk.getMarketName());
+//                                    if (total > b.getAvailable()) {
+//                                        System.out.println("Insufficient Funds: "+mk.getMarketName()+" asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
+//                                        continue top;
+//                                    }
+
+                                     donotsell.add(mk.getMarketName());
 
                                     Order o = buy("buy " + mk.getMarketName() + " " + dfcoins.format(total));
                                 }
