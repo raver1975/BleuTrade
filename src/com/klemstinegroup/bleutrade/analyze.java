@@ -374,7 +374,7 @@ class Analyze {
                         saved.add(new TickerData(g1, g2, bid, ask, last, time));
 
                         for (TickerData td : saved) {
-                            if (td.time < System.currentTimeMillis() - 86400000) {
+                            if (td.time < System.currentTimeMillis() - (86400000*7)) {
                                 remove.add(td);
                             } else {
                                 String bb = td.coin + "_" + td.base;
@@ -508,7 +508,7 @@ class Analyze {
                     }
 
                     System.out.println("----------------------------");
-                    System.out.println("History");
+                    System.out.println("Holdings");
                     HashMap<String, Double> hmprice = new HashMap<String, Double>();
                     HashMap<String, Double> hmquantity = new HashMap<String, Double>();
                     HashMap<String, Double> hmminsize = new HashMap<String, Double>();
@@ -610,8 +610,8 @@ class Analyze {
                                 if (mk.getMarketName().equals(market)) {
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                     double total = (mk.getMinTradeSize());
-
-                                    while (total*rate<0.00000001d)total*=1.1d;
+                                    int cnt=0;
+                                    while (total*rate<0.00000001d&&cnt++<10000)total*=1.1d;
                                     total *= buyFactor;
 //                                    if (!mk.getBaseCurrency().equals("BTC"))
 //                                        total /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
