@@ -594,8 +594,8 @@ class Analyze {
                                     System.out.println("----BUY BLEU-------");
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                     double total = (mk.getMinTradeSize());
-
-                                    while (total*rate<0.00000001d)total*=1.1d;
+                                    int cnt=0;
+                                    while (total*rate<0.00000001d&&cnt++<10000000)total*=1.1d;
                                     total *= buyFactor;
                                     Balance b = balanceHM.get(mk.getBaseCurrency());
                                    //while (total * rate <= 0.00001d) total *= 1.1d;
@@ -611,7 +611,7 @@ class Analyze {
                                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                     double total = (mk.getMinTradeSize());
                                     int cnt=0;
-                                    while (total*rate<0.00000001d&&cnt++<10000)total*=1.1d;
+                                    while (total*rate<0.00000001d&&cnt++<10000000)total*=1.1d;
                                     total *= buyFactor;
 //                                    if (!mk.getBaseCurrency().equals("BTC"))
 //                                        total /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
@@ -657,11 +657,13 @@ class Analyze {
 
 
                                 Balance b = balanceHM.get(mk.getMarketCurrency());
-                                double rate = tickerHM.get(mk.getMarketName()).getAsk();
+                                double rate = tickerHM.get(mk.getMarketName()).getBid();
 //                                if (!mk.getBaseCurrency().equals("BTC"))
 //                                    rate /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
                                 double total = mk.getMinTradeSize()/rate;
-                                while (total*rate<0.00000001d)total*=1.1d;
+                               // int cnt=0;
+                               // while (total*rate<0.00001d&&cnt++<10000000)total*=1.1d;
+//                                while (total*rate<0.00001d)total*=1.1d;
                                 total *= sellFactor;
 
                                 if (goodtoorder.contains(market)) {
