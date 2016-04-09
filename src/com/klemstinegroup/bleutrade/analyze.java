@@ -543,7 +543,7 @@ class Analyze {
                         String g1 = h.substring(0, h.indexOf('_'));
                         String g2 = h.substring(h.indexOf('_') + 1);
                         if (!g2.equals("BTC"))
-                            profit *= tickerHM.get(g2 + "_" + "BTC").getAsk();
+                            profit *= tickerHM.get(g2 + "_" + "BTC").getBid();
                         sortedout.add(dfcoins.format(profit) + "\t$" + dfdollars.format(profit * bitcoinprice) + "\t" + h);
                         totprofit += profit;
                         //double rate = tickerHM.get(h).getAsk();
