@@ -536,7 +536,7 @@ class Analyze {
                     for (String h : hmquantity.keySet()) {
                         double hmqu = hmquantity.get(h);
                         double pricethen = hmprice.get(h);
-                        double pricenow = tickerHM.get(h).getAsk() * hmqu;
+                        double pricenow = tickerHM.get(h).getBid() * hmqu;
                         //double pricethen = hmpr * hmqu;
                         double profit = pricenow * .9975d - pricethen * 1.0025d;
 //
