@@ -79,8 +79,10 @@ class Analyze {
                                                 for (Order o : orders) {
                                                     if (o.getOrderId().equals(id + "")) {
                                                         System.out.println("order successful! " + id);
-                                                        history.add(o);
-                                                        Serializer.saveHistory(history);
+                                                        if (!o.getExchange().contains("BLEU")) {
+                                                            history.add(o);
+                                                            Serializer.saveHistory(history);
+                                                        }
 //                                                                refresh = true;
                                                         return o;
                                                     }
@@ -136,8 +138,10 @@ class Analyze {
                                                 System.out.println("order successful!");
 //                                                        refresh = true;
                                                 o.setQuantity(-o.getQuantity());
-                                                history.add(o);
-                                                Serializer.saveHistory(history);
+                                                if (!o.getExchange().contains("BLEU")) {
+                                                    history.add(o);
+                                                    Serializer.saveHistory(history);
+                                                }
                                                 return o;
                                             }
                                         }
@@ -654,7 +658,7 @@ class Analyze {
                                 Balance b = balanceHM.get(mk.getMarketCurrency());
                                 double rate = tickerHM.get(mk.getMarketName()).getBid();
 //                                if (!mk.getBaseCurrency().equals("BTC"))
-//                                    rate /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
+//                                    rate *= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
                                 double total = mk.getMinTradeSize() / rate;
                                 // int cnt=0;
                                 // while (total*rate<0.00001d&&cnt++<10000000)total*=1.1d;
