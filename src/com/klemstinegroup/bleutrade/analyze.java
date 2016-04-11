@@ -16,7 +16,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 class Analyze {
-    public static boolean debug = true;
+    public static boolean debug = false;
     //    private Server hsqlServer;
 //    private  Connection conn;
     ArrayList<TickerData> saved = new ArrayList<TickerData>();
