@@ -661,7 +661,7 @@ class Analyze {
 //                                while (total*rate<0.00001d)total*=1.1d;
                                 total *= sellFactor;
 
-                                if (goodtoorder.contains(market)) {
+                                if (goodtoorder.contains(mk.getMarketCurrency())) {
                                     System.out.println(s);
 //                                    if (b.getAvailable() < total) {
 //                                        System.out.println("Insufficient Funds: " + mk.getMarketName() + " \tasking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
