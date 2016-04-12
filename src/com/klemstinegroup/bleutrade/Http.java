@@ -93,14 +93,15 @@ public class Http {
         System.out.println("opening url=" + (url.length() < 80 ? url : url.substring(0, 80)+"..."));
         URL website = new URL(url);
         URLConnection connection = website.openConnection();
+        connection.setConnectTimeout(10000);
+        connection.setConnectTimeout(60000);
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(
                         connection.getInputStream()));
 
         StringBuilder response = new StringBuilder();
         String inputLine;
-        connection.setConnectTimeout(10000);
-        connection.setConnectTimeout(60000);
+
         while ((inputLine = in.readLine()) != null)
             response.append(inputLine);
 
