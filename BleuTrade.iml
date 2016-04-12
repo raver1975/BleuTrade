@@ -7,11 +7,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="json-simple-1.1.1" level="project" />
-    <orderEntry type="library" name="gson-2.6.1" level="project" />
-    <orderEntry type="library" name="commons-lang-2.6" level="project" />
-    <orderEntry type="library" name="hsqldb" level="project" />
-    <orderEntry type="library" name="algs4" level="project" />
-    <orderEntry type="library" name="ta-lib-0.4.0" level="project" />
+    <orderEntry type="library" name="LIBS" level="project" />
   </component>
 </module>

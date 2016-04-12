@@ -2,16 +2,21 @@ package com.klemstinegroup.bleutrade;
 
 
 import com.klemstinegroup.bleutrade.json.*;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.InvalidKeyException;
@@ -30,48 +35,25 @@ public class Http {
 
     static String uri = "https://bleutrade.com/api/v2";
 
-    public static double bitcoinPrice() {
+    public static double bitcoinPrice() throws IOException {
         String url = "https://api.coinbase.com/v2/prices/spot?currency=USD";
         URL website = null;
-        try {
             website = new URL(url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        URLConnection connection = null;
-        try {
-            connection = website.openConnection();
-            connection.setConnectTimeout(10000);
-            connection.setReadTimeout(60000);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(
-                    new InputStreamReader(
-                            connection.getInputStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpGet httpget=new HttpGet(website.toString());
+        CloseableHttpResponse res = httpclient.execute(httpget);
 
-        StringBuilder response = new StringBuilder();
-        String inputLine;
-
-        try {
-            while ((inputLine = in.readLine()) != null)
-                response.append(inputLine);
-        } catch (IOException e) {
-            e.printStackTrace();
+        final InputStream is = res.getEntity().getContent();;
+        final Reader reader = new InputStreamReader(is);
+        final char[] buf = new char[1024];
+        int read;
+        final StringBuilder response = new StringBuilder();
+        while ((read = reader.read(buf)) > 0) {
+            response.append(buf, 0, read);
         }
-
-        try {
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String res = response.toString();
-        JSONObject obj = new JSONObject(res);
+        reader.close();
+        String rest = response.toString();
+        JSONObject obj = new JSONObject(rest);
         return obj.getJSONObject("data").getDouble("amount");
 
     }
@@ -90,25 +72,24 @@ public class Http {
             }
             url = url.substring(0, url.length() - 1);
         }
-        System.out.println("opening url=" + (url.length() < 80 ? url : url.substring(0, 80)+"..."));
+        System.out.println("opening url=" + (url.length() < 80 ? url : url.substring(0, 80) + "..."));
         URL website = new URL(url);
-        URLConnection connection = website.openConnection();
-        connection.setConnectTimeout(10000);
-        connection.setConnectTimeout(60000);
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(
-                        connection.getInputStream()));
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpGet httpget=new HttpGet(website.toString());
+        CloseableHttpResponse res = httpclient.execute(httpget);
 
-        StringBuilder response = new StringBuilder();
-        String inputLine;
-
-        while ((inputLine = in.readLine()) != null)
-            response.append(inputLine);
-
-        in.close();
-        String res = response.toString();
+        final InputStream is = res.getEntity().getContent();;
+        final Reader reader = new InputStreamReader(is);
+        final char[] buf = new char[1024];
+        int read;
+        final StringBuilder response = new StringBuilder();
+        while ((read = reader.read(buf)) > 0) {
+            response.append(buf, 0, read);
+        }
+        reader.close();
+        String rest = response.toString();
         // System.out.println("response="+res);
-        return new JSONObject(res);
+        return new JSONObject(rest);
     }
 
     public static JSONObject openPrivate(String url, Map<String, String> params) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
@@ -133,27 +114,42 @@ public class Http {
 
         String hash = toHex(sha_HMAC.doFinal(url.getBytes()));
 
-        System.out.println("opening url=" + (url.length() < 80 ? url : url.substring(0, 80)+"..."));
+        System.out.println("opening url=" + (url.length() < 80 ? url : url.substring(0, 80) + "..."));
         URL website = new URL(url);
 
-        URLConnection connection = website.openConnection();
-        connection.setConnectTimeout(10000);
-        connection.setReadTimeout(60000);
-        connection.setRequestProperty("apisign", hash);
 
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(
-                        connection.getInputStream()));
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        HttpGet httpget=new HttpGet(website.toString());
+        httpget.setHeader("apisign",hash);
+        CloseableHttpResponse res = httpclient.execute(httpget);
 
-        StringBuilder response = new StringBuilder();
-        String inputLine;
+        final InputStream is = res.getEntity().getContent();
+        final Reader reader = new InputStreamReader(is);
+        final char[] buf = new char[1024];
+        int read;
+        final StringBuilder response = new StringBuilder();
+        while ((read = reader.read(buf)) > 0) {
+            response.append(buf, 0, read);
+        }
+        reader.close();
 
-        while ((inputLine = in.readLine()) != null)
-            response.append(inputLine);
-
-        in.close();
-        String res = response.toString();
-        return new JSONObject(res);
+//        URLConnection connection = website.openConnection(Proxy.NO_PROXY);
+//        connection.setConnectTimeout(10000);
+//        connection.setReadTimeout(60000);
+//        connection.setRequestProperty("apisign", hash);
+//
+//        connection.connect();
+//        final InputStream is = connection.getInputStream();
+//        final Reader reader = new InputStreamReader(is);
+//        final char[] buf = new char[1024];
+//        int read;
+//        final StringBuilder response = new StringBuilder();
+//        while ((read = reader.read(buf)) > 0) {
+//            response.append(buf, 0, read);
+//        }
+//        reader.close();
+        String rest = response.toString();
+        return new JSONObject(rest);
     }
 
     public static String toHex(byte[] bytes) {
@@ -180,14 +176,14 @@ public class Http {
         return arr;
     }
 
-    public static ArrayList<Market> getMarkets()  {
+    public static ArrayList<Market> getMarkets() {
         JSONObject json = null;
         try {
             json = open("/public/getmarkets", null);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (json==null)return null;
+        if (json == null) return null;
 
         boolean success = json.getBoolean("success");
         if (!success) System.out.println(json.getString("message"));
@@ -200,13 +196,13 @@ public class Http {
         return arr;
     }
 
-    public static Ticker getTicker(String ticker){
+    public static Ticker getTicker(String ticker) {
         ArrayList<String> al = new ArrayList<String>();
         al.add(ticker);
         return getTickers(al).get(0);
     }
 
-    public static ArrayList<Ticker> getTickers(List<String> tickers)  {
+    public static ArrayList<Ticker> getTickers(List<String> tickers) {
         JSONObject json = null;
         HashMap<String, String> params = new HashMap<String, String>();
         if (tickers != null) {
@@ -240,7 +236,7 @@ public class Http {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (json==null)return null;
+        if (json == null) return null;
         boolean success = json.getBoolean("success");
         if (!success) System.out.println(json.getString("message"));
         JSONArray array = json.getJSONArray("result");
@@ -277,7 +273,7 @@ public class Http {
     }
 
     public static long buyselllimit(String market, double rate, double quantity, boolean buy) {
-        if (!buy && market.contains("BLEU"))return -1;
+        if (!buy && market.contains("BLEU")) return -1;
         JSONObject json = null;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("market", market);
@@ -285,7 +281,7 @@ public class Http {
         params.put("quantity", Analyze.dfcoins.format(quantity));
 //        params.put("comments", comments);
         System.out.println("placing " + (buy ? "buy" : "sell") + " order:" + market + "\t" + Analyze.dfcoins.format(rate) + "\t#" + Analyze.dfcoins.format(quantity));
-        if (Analyze.debug)return -1;
+        if (Analyze.debug) return -1;
         try {
             if (buy) json = openPrivate("/market/buylimit", params);
             else json = openPrivate("/market/selllimit", params);
@@ -305,8 +301,8 @@ public class Http {
         JSONObject json = null;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("orderid", Long.toString(id));
-        System.out.println("canceling order "+id);
-        if (Analyze.debug)return true;
+        System.out.println("canceling order " + id);
+        if (Analyze.debug) return true;
         try {
             json = openPrivate("/market/cancel", params);
         } catch (Exception e) {
