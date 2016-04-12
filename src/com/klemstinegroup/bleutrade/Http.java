@@ -42,7 +42,7 @@ public class Http {
         try {
             connection = website.openConnection();
             connection.setConnectTimeout(10000);
-            connection.setConnectTimeout(60000);
+            connection.setReadTimeout(60000);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -137,7 +137,7 @@ public class Http {
 
         URLConnection connection = website.openConnection();
         connection.setConnectTimeout(10000);
-        connection.setConnectTimeout(60000);
+        connection.setReadTimeout(60000);
         connection.setRequestProperty("apisign", hash);
 
         BufferedReader in = new BufferedReader(
