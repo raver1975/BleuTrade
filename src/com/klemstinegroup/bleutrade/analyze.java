@@ -173,35 +173,38 @@ class Analyze {
                 while (true) {
                     try {
                         String line = br.readLine();
-                        if (line.equals("exit")) {
-                            System.exit(0);
-                        }
-                        if (line.equals(" ")) {
-                            refresh = true;
-                        }
-                        if (line.startsWith("buy ")) {
-                            buy(line);
-                        }
-
-
-                        if (line.startsWith("sell ")) {
-                            sell(line);
-                        }
-                        if (line.startsWith("reset")) {
-                            String market = line.substring(6);
-
-                            ArrayList<Order> remove = new ArrayList<Order>();
-                            for (Order o : history) {
-                                //System.out.println(":"+market+":"+o.getExchange());
-                                if (o.getExchange().equals(market)) remove.add(o);
+                        if (line!=null){
+                            if (line.equals("exit")) {
+                                System.exit(0);
                             }
-                            for (Order o : remove) history.remove(o);
-                            try {
-                                Serializer.saveHistory(history);
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            if (line.equals(" ")) {
+                                refresh = true;
                             }
-                            System.out.println("Removed all " + market);
+                            if (line.startsWith("buy ")) {
+                                buy(line);
+                            }
+
+
+                            if (line.startsWith("sell ")) {
+                                sell(line);
+                            }
+                            if (line.startsWith("reset")) {
+                                String market = line.substring(6);
+
+                                ArrayList<Order> remove = new ArrayList<Order>();
+                                for (Order o : history) {
+                                    //System.out.println(":"+market+":"+o.getExchange());
+                                    if (o.getExchange().equals(market)) remove.add(o);
+                                }
+                                for (Order o : remove) history.remove(o);
+                                try {
+                                    Serializer.saveHistory(history);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                System.out.println("Removed all " + market);
+                            }
+
                         }
 
 
