@@ -52,6 +52,7 @@ public class Http {
             response.append(buf, 0, read);
         }
         reader.close();
+        httpclient.close();
         String rest = response.toString();
         JSONObject obj = new JSONObject(rest);
         return obj.getJSONObject("data").getDouble("amount");
@@ -87,6 +88,7 @@ public class Http {
             response.append(buf, 0, read);
         }
         reader.close();
+        httpclient.close();
         String rest = response.toString();
         // System.out.println("response="+res);
         return new JSONObject(rest);
@@ -132,6 +134,7 @@ public class Http {
             response.append(buf, 0, read);
         }
         reader.close();
+        httpclient.close();
 
 //        URLConnection connection = website.openConnection(Proxy.NO_PROXY);
 //        connection.setConnectTimeout(10000);
