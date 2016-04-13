@@ -284,7 +284,7 @@ public class Http {
         params.put("quantity", Analyze.dfcoins.format(quantity));
 //        params.put("comments", comments);
         System.out.println("placing " + (buy ? "buy" : "sell") + " order:" + market + "\t" + Analyze.dfcoins.format(rate) + "\t#" + Analyze.dfcoins.format(quantity));
-        if (Analyze.debug) return -1;
+        if (Analyze.debug) return 1;
         try {
             if (buy) json = openPrivate("/market/buylimit", params);
             else json = openPrivate("/market/selllimit", params);
