@@ -16,7 +16,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 class Analyze {
-    public static boolean debug = true;
+    public static boolean debug = false;
     //    private Server hsqlServer;
 //    private  Connection conn;
     ArrayList<TickerData> saved = new ArrayList<TickerData>();
@@ -526,10 +526,7 @@ class Analyze {
                                 if (!hmprice.containsKey(g)) hmprice.put(g, 0d);
                                 if (!hmquantity.containsKey(g)) hmquantity.put(g, 0d);
                                 double quant=o.getQuantity() * o.getPrice();
-                                String g1 = g.substring(0, g.indexOf('_'));
-                                String g2 = g.substring(g.indexOf('_') + 1);
-                                if (!g2.equals("BTC"))quant*=tickerHM.get(g2 + "_" + "BTC").getBid();
-                                hmprice.put(g, hmprice.get(g) + (quant) * 1.0025d);
+                                hmprice.put(g, hmprice.get(g) +quant);
                                 hmquantity.put(g, hmquantity.get(g) + o.getQuantity());
                                 hmminsize.put(g, mk.getMinTradeSize());
                                 break;
@@ -543,18 +540,24 @@ class Analyze {
                     HashSet<String> donotsell = new HashSet<String>();
                     HashSet<String> donotbuy = new HashSet<String>();
                     ArrayList<String> sortedout = new ArrayList<String>();
+
                     double totprofit = 0d;
                     for (String h : hmquantity.keySet()) {
                         double hmqu = hmquantity.get(h);
                         double pricethen = hmprice.get(h);
                         double pricenow = tickerHM.get(h).getBid() * hmqu;
+                        String g1 = h.substring(0, h.indexOf('_'));
+                        String g2 = h.substring(h.indexOf('_') + 1);
+
+                        if (!g2.equals("BTC")){
+                            pricethen*=tickerHM.get(g2 + "_" + "BTC").getBid();
+                            pricenow*=tickerHM.get(g2 + "_" + "BTC").getBid();
+                        }
                         //double pricethen = hmpr * hmqu;
                         double profit = pricenow * .9975d - pricethen * 1.0025d;
 //
-                        String g1 = h.substring(0, h.indexOf('_'));
-                        String g2 = h.substring(h.indexOf('_') + 1);
-                        if (!g2.equals("BTC"))
-                            profit *= tickerHM.get(g2 + "_" + "BTC").getBid();
+//                        if (!g2.equals("BTC"))
+//                            profit *= tickerHM.get(g2 + "_" + "BTC").getBid();
                         totprofit += profit;
                         if (!comprofit.containsKey(g1)) comprofit.put(g1, profit);
                         else {
