@@ -16,7 +16,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 class Analyze {
-    public static boolean debug = false;
+    public static boolean debug = true;
     //    private Server hsqlServer;
 //    private  Connection conn;
     ArrayList<TickerData> saved = new ArrayList<TickerData>();
@@ -525,7 +525,11 @@ class Analyze {
                             if (mk.getMarketName().equals(g)) {
                                 if (!hmprice.containsKey(g)) hmprice.put(g, 0d);
                                 if (!hmquantity.containsKey(g)) hmquantity.put(g, 0d);
-                                hmprice.put(g, hmprice.get(g) + (o.getQuantity() * o.getPrice()) * 1.0025d);
+                                double quant=o.getQuantity() * o.getPrice();
+                                String g1 = g.substring(0, g.indexOf('_'));
+                                String g2 = g.substring(g.indexOf('_') + 1);
+                                if (!g2.equals("BTC"))quant*=tickerHM.get(g2 + "_" + "BTC").getBid();
+                                hmprice.put(g, hmprice.get(g) + (quant) * 1.0025d);
                                 hmquantity.put(g, hmquantity.get(g) + o.getQuantity());
                                 hmminsize.put(g, mk.getMinTradeSize());
                                 break;
