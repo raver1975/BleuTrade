@@ -6,17 +6,14 @@ import com.klemstinegroup.bleutrade.json.Currency;
 import edu.princeton.cs.algs4.BellmanFordSP;
 import edu.princeton.cs.algs4.DirectedEdge;
 import edu.princeton.cs.algs4.EdgeWeightedDigraph;
-import sun.nio.cs.HistoricallyNamedCharset;
 //import edu.princeton.cs.algs4.StdOut;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.util.*;
 
 class Analyze {
-    public static boolean debug = false;
+
     //    private Server hsqlServer;
 //    private  Connection conn;
     ArrayList<TickerData> saved = new ArrayList<TickerData>();
@@ -38,10 +35,12 @@ class Analyze {
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
     private boolean refresh;
     private static int wait = 1;
-    private static final double sellabove = 0.05d;
-    private static final double donotbuybelow = -.02d;
-    private double buyFactor = 1000d;
-    private double sellFactor = 2d;
+
+    public static boolean debug = false;
+    private double sellabove = 0.05d;
+    private double donotbuybelow = -.02d;
+    private double buyfactor = 1000d;
+    private double sellfactor = 2d;
 
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
@@ -76,7 +75,7 @@ class Analyze {
                                             for (int i = 0; i < 10; i++) {
                                                 ArrayList<Order> orders = Http.getOrders("OK");
                                                 for (Order o : orders) {
-                                                    if (o.getOrderId().equals(id + "")) {
+                                                    if (o.getOrderId().equals(id + "") || debug) {
                                                         System.out.println("order successful! " + id);
                                                         if (!o.getExchange().contains("BLEU")) {
                                                             history.add(o);
@@ -133,14 +132,33 @@ class Analyze {
                                     top:for (int i = 0; i < 10; i++) {
                                         ArrayList<Order> orders = Http.getOrders("OK");
                                         for (Order o : orders) {
-                                            if (o.getOrderId().equals(id + "")) {
+                                            if (o.getOrderId().equals(id + "") || debug) {
                                                 System.out.println("order successful!");
 //                                                        refresh = true;
-                                                o.setQuantity(-o.getQuantity());
-                                                if (!o.getExchange().contains("BLEU")) {
-                                                    history.add(o);
-                                                    Serializer.saveHistory(history);
+//                                                o.setQuantity(-o.getQuantity());
+//                                                    history.add(o);
+                                                double toto = o.getQuantity();
+                                                String g1 = market.substring(0, market.indexOf('_'));
+                                                String g2 = market.substring(market.indexOf('_') + 1);
+                                                int cnn = 0;
+                                                Collections.sort(history);
+                                                while (toto > 0.000000009d && cnn++ < 100000) {
+                                                    ArrayList<Order> remove = new ArrayList<Order>();
+                                                    for (Order oh : history) {
+                                                        if (oh.getExchange().startsWith(g1 + "_")) {
+                                                            double ohq = oh.getQuantity();
+                                                            if (ohq > toto) {
+                                                                oh.setQuantity(ohq - toto);
+                                                                toto = 0d;
+                                                            } else {
+                                                                toto -= ohq;
+                                                                remove.add(oh);
+                                                            }
+                                                        }
+                                                    }
+                                                    for (Order oh : remove) history.remove(oh);
                                                 }
+                                                Serializer.saveHistory(history);
                                                 return o;
                                             }
                                         }
@@ -164,6 +182,28 @@ class Analyze {
     }
 
     public Analyze() {
+        Properties prop=new Properties();
+
+        InputStream input ;
+        try {
+            input = new FileInputStream("config.properties");
+            prop.load(input);
+            debug=Boolean.parseBoolean(prop.getProperty("debug"));
+            sellabove=Double.parseDouble(prop.getProperty("sellabove"));
+            donotbuybelow=Double.parseDouble(prop.getProperty("donotbuybelow"));
+            buyfactor =Double.parseDouble(prop.getProperty("buyfactor"));
+            sellfactor =Double.parseDouble(prop.getProperty("sellfactor"));
+            System.out.println("debug="+debug);
+            System.out.println("sellabove="+sellabove);
+            System.out.println("donotbuybelow="+donotbuybelow);
+            System.out.println("buyfactor="+buyfactor);
+            System.out.println("sellfactor="+sellfactor);
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 
         new Thread(new Runnable() {
             @Override
@@ -525,8 +565,8 @@ class Analyze {
                             if (mk.getMarketName().equals(g)) {
                                 if (!hmprice.containsKey(g)) hmprice.put(g, 0d);
                                 if (!hmquantity.containsKey(g)) hmquantity.put(g, 0d);
-                                double quant=o.getQuantity() * o.getPrice();
-                                hmprice.put(g, hmprice.get(g) +quant);
+                                double quant = o.getQuantity() * o.getPrice();
+                                hmprice.put(g, hmprice.get(g) + quant);
                                 hmquantity.put(g, hmquantity.get(g) + o.getQuantity());
                                 hmminsize.put(g, mk.getMinTradeSize());
                                 break;
@@ -549,9 +589,9 @@ class Analyze {
                         String g1 = h.substring(0, h.indexOf('_'));
                         String g2 = h.substring(h.indexOf('_') + 1);
 
-                        if (!g2.equals("BTC")){
-                            pricethen*=tickerHM.get(g2 + "_" + "BTC").getBid();
-                            pricenow*=tickerHM.get(g2 + "_" + "BTC").getBid();
+                        if (!g2.equals("BTC")) {
+                            pricethen *= tickerHM.get(g2 + "_" + "BTC").getBid();
+                            pricenow *= tickerHM.get(g2 + "_" + "BTC").getBid();
                         }
                         //double pricethen = hmpr * hmqu;
                         double profit = pricenow * .9975d - pricethen * 1.0025d;
@@ -600,7 +640,7 @@ class Analyze {
                                 double total = (mk.getMinTradeSize());
                                 int cnt = 0;
                                 while (total * rate < 0.00000001d && cnt++ < 10000000) total *= 1.1d;
-                                total *= buyFactor;
+                                total *= buyfactor;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 //while (total * rate <= 0.00001d) total *= 1.1d;
                                 System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
@@ -616,7 +656,7 @@ class Analyze {
                                 double total = (mk.getMinTradeSize());
                                 int cnt = 0;
                                 while (total * rate < 0.00000001d && cnt++ < 10000000) total *= 1.1d;
-                                total *= buyFactor;
+                                total *= buyfactor;
 //                                    if (!mk.getBaseCurrency().equals("BTC"))
 //                                        total /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
@@ -624,7 +664,7 @@ class Analyze {
                                     System.out.println("Do not buy!");
                                     continue top;
                                 }
-                                //if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*buyFactor;
+                                //if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*buyfactor;
 //                                    if (total <= 0000.00000001) total = 0000.00000001;
                                 //min volume
                                 //while (total * rate <= 0.00001d) total *= 1.1d;
@@ -664,10 +704,10 @@ class Analyze {
 //                                if (!mk.getBaseCurrency().equals("BTC"))
 //                                    rate *= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
                                 double total = mk.getMinTradeSize();// / rate;
-                                if (total*rate<0.00001d){
-                                    total=0.00001d/rate;
+                                if (total * rate < 0.00001d) {
+                                    total = 0.00001d / rate;
                                 }
-                                total *= sellFactor;
+                                total *= sellfactor;
                                 if (goodtoorder.contains(mk.getMarketCurrency())) {
                                     System.out.println(s);
 //                                    if (b.getAvailable() < total) {
@@ -690,52 +730,25 @@ class Analyze {
                     System.out.println("time=" + new Date());
 
 
-                    System.out.println("-------------------------------------------------------------------------------------------------");
-                    //history cleanup
-                    //collect negative ones, total them up
-//                    boolean flag = false;
-//                    while (!flag) {
-//                        flag = true;
-//                        ArrayList<Order> remove = new ArrayList<Order>();
-//                        top:
-//                        for (Order o : history) {
-//                            if (o == null) {
-//                                remove.add(o);
-//                                continue;
-//                            }
-//                            for (Order o1 : history) {
-//                                if (o1 == null) {
-//                                    remove.add(o1);
-//                                    continue;
-//                                }
-//                                if (o == o1) continue;
-//                                if (o.getPrice() == -o1.getPrice() && o.getType().equals("BUY") && o1.getType().equals("SELL")) {
-//                                    System.out.println("removing " + o + "\t" + o1);
-//                                    remove.add(o);
-//                                    remove.add(o1);
-//                                    flag = false;
-//                                    break top;
-//                                }
-//                            }
-//                        }
-//                        history.removeAll(remove);
-//                    }
-
+                   // System.out.println("-------------------------------------------------------------------------------------------------");
                     //compress history
                     HashMap<String, Double> octot = new HashMap<String, Double>();
                     HashMap<String, Double> ocqua = new HashMap<String, Double>();
                     for (Order o : history) {
-                        if (octot.get(o.getExchange()) == null) {
-                            octot.put(o.getExchange(), 0d);
+                        String h = o.getExchange();
+
+                        if (octot.get(h) == null) {
+                            octot.put(h, 0d);
                         }
-                        if (ocqua.get(o.getExchange()) == null) {
-                            ocqua.put(o.getExchange(), 0d);
+                        if (ocqua.get(h) == null) {
+                            ocqua.put(h, 0d);
                         }
 
-                        octot.put(o.getExchange(), octot.get(o.getExchange()) + (o.getPrice() * o.getQuantity()));
-                        ocqua.put(o.getExchange(), ocqua.get(o.getExchange()) + o.getQuantity());
+                        octot.put(h, octot.get(h) + (o.getPrice() * o.getQuantity()));
+                        ocqua.put(h, ocqua.get(o.getExchange()) + o.getQuantity());
                     }
                     history.clear();
+
                     for (Map.Entry<String, Double> e : octot.entrySet()) {
                         Order bb = new Order();
                         bb.setPrice(octot.get(e.getKey()) / ocqua.get(e.getKey()));
@@ -744,7 +757,11 @@ class Analyze {
 //                        if (e.getKey().equals("IOC_BTC")){}
 //                        else
                         history.add(bb);
+                        //System.out.println(dfcoins.format(bb.getQuantity()) + "\t" + bb.getExchange());
+
+
                     }
+                    System.out.println("-------------------------------------------------------------------------------------------------");
                     // System.out.println("-----------");
 
 
