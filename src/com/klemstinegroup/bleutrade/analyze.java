@@ -41,6 +41,7 @@ class Analyze {
     private double donotbuybelow = -.02d;
     private double buyfactor = 1000d;
     private double sellfactor = 2d;
+    private boolean buyBleu=false;
 
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
@@ -189,11 +190,13 @@ class Analyze {
             input = new FileInputStream("config.properties");
             prop.load(input);
             debug=Boolean.parseBoolean(prop.getProperty("debug"));
+            buyBleu=Boolean.parseBoolean(prop.getProperty("buyBleu"));
             sellabove=Double.parseDouble(prop.getProperty("sellabove"));
             donotbuybelow=Double.parseDouble(prop.getProperty("donotbuybelow"));
             buyfactor =Double.parseDouble(prop.getProperty("buyfactor"));
             sellfactor =Double.parseDouble(prop.getProperty("sellfactor"));
             System.out.println("debug="+debug);
+            System.out.println("buyBleu="+buyBleu);
             System.out.println("sellabove="+sellabove);
             System.out.println("donotbuybelow="+donotbuybelow);
             System.out.println("buyfactor="+buyfactor);
@@ -633,7 +636,8 @@ class Analyze {
                         donotsell.add(market);
                         top:
                         for (Market mk : markets) {
-                            if (!buyblueonce && mk.getMarketName().equals("BLEU_BTC")) {
+                            //buy bleutrade each round
+                            if (buyBleu &&!buyblueonce && mk.getMarketName().equals("BLEU_BTC")) {
                                 buyblueonce = true;
                                 System.out.println("----BUY BLEU-------");
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
@@ -642,13 +646,8 @@ class Analyze {
                                 while (total * rate < 0.00000001d && cnt++ < 10000000) total *= 1.1d;
                                 total *= buyfactor;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
-                                //while (total * rate <= 0.00001d) total *= 1.1d;
                                 System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
-//                                    if (b.getAvailable()>total*rate) {
                                 Order o1 = buy("buy BLEU_BTC " + dfcoins.format(total));
-                                //if (o1 != null) history.add(o1);
-//                                    }
-//                                    else  System.out.println("Insufficient Funds:  asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
                             }
 
                             if (mk.getMarketName().equals(market)) {
