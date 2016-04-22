@@ -42,6 +42,7 @@ class Analyze {
     private double buyfactor = 1000d;
     private double sellfactor = 2d;
     private boolean buyBleu=false;
+    private boolean donotbuyconstraint=true;
 
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
@@ -195,8 +196,10 @@ class Analyze {
             donotbuybelow=Double.parseDouble(prop.getProperty("donotbuybelow"));
             buyfactor =Double.parseDouble(prop.getProperty("buyfactor"));
             sellfactor =Double.parseDouble(prop.getProperty("sellfactor"));
+            donotbuyconstraint=Boolean.parseBoolean(prop.getProperty("donotbuyconstraint"));
             System.out.println("debug="+debug);
             System.out.println("buyBleu="+buyBleu);
+            System.out.println("donotbuyconstraint="+donotbuyconstraint);
             System.out.println("sellabove="+sellabove);
             System.out.println("donotbuybelow="+donotbuybelow);
             System.out.println("buyfactor="+buyfactor);
@@ -659,20 +662,12 @@ class Analyze {
 //                                    if (!mk.getBaseCurrency().equals("BTC"))
 //                                        total /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
-                                if (donotbuy.contains(mk.getMarketCurrency())) {
+                                //do not buy constraint
+                                if (donotbuyconstraint&&donotbuy.contains(mk.getMarketCurrency())) {
                                     System.out.println("Do not buy!");
                                     continue top;
                                 }
-                                //if (total <= mk.getMinTradeSize()) total = mk.getMinTradeSize()*buyfactor;
-//                                    if (total <= 0000.00000001) total = 0000.00000001;
-                                //min volume
-                                //while (total * rate <= 0.00001d) total *= 1.1d;
                                 System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
-//                                    if (total > b.getAvailable()) {
-//                                        System.out.println("Insufficient Funds: "+mk.getMarketName()+" asking for=" + dfcoins.format(total) + "\thave=" + dfcoins.format(b.getAvailable()));
-//                                        continue top;
-//                                    }
-
                                 donotsell.add(mk.getMarketName());
 
                                 Order o = buy("buy " + mk.getMarketName() + " " + dfcoins.format(total));
