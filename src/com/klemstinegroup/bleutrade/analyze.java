@@ -144,7 +144,7 @@ class Analyze {
                                                 String g2 = market.substring(market.indexOf('_') + 1);
                                                 int cnn = 0;
                                                 Collections.sort(history);
-                                                while (toto > 0.000000009d && cnn++ < 100000) {
+                                                while (cnn++ < 100000 &&toto > 0.000000009d) {
                                                     ArrayList<Order> remove = new ArrayList<Order>();
                                                     for (Order oh : history) {
                                                         if (oh.getExchange().startsWith(g1 + "_")) {
@@ -646,7 +646,7 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 double total = (mk.getMinTradeSize());
                                 int cnt = 0;
-                                while (total * rate < 0.00000001d && cnt++ < 10000000&&total>0.000000009d ) total *= 1.1d;
+                                while (cnt++ < 10000000&&total * rate < 0.00000001d &&total>0.000000009d ) total *= 1.1d;
                                 total *= buyfactor;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
@@ -657,7 +657,7 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getAsk();
                                 double total = (mk.getMinTradeSize());
                                 int cnt = 0;
-                                while (total * rate < 0.00000001d && cnt++ < 10000000&&total>0.000000009d ) total *= 1.1d;
+                                while (cnt++ < 10000000&&total * rate < 0.00000001d && total>0.000000009d ) total *= 1.1d;
                                 total *= buyfactor;
 //                                    if (!mk.getBaseCurrency().equals("BTC"))
 //                                        total /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
