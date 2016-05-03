@@ -647,7 +647,8 @@ class Analyze {
                                 double total = (mk.getMinTradeSize());
                                 int cnt = 0;
                                 while (cnt++ < 10000000&&total * rate < 0.00000001d &&total>0.000000009d ) total *= 1.1d;
-                                total *= buyfactor;
+                                //total *= buyfactor;
+                                total *= 1000;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
                                 Order o1 = buy("buy BLEU_BTC " + dfcoins.format(total));
