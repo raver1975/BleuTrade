@@ -9,7 +9,11 @@ import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 //import edu.princeton.cs.algs4.StdOut;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 class Analyze {
@@ -554,6 +558,13 @@ class Analyze {
                         System.out.println("  TOT-B" + "\t--------------\t" + dfcoins.format(bittot - bl) + "\t$" + dfdollars.format((bittot - bl) * bitcoinprice));
                         System.out.println("  TOT" + "\t--------------\t" + dfcoins.format(bittot) + "\t$" + dfdollars.format(bittot * bitcoinprice));
 
+                        SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy, hh:mm aaa");
+                        String xx=sdf.format(System.currentTimeMillis())+"\t"+dfcoins.format(bittot) + "\t$" + dfdollars.format(bittot * bitcoinprice)+"\n";
+                        try {
+                            Files.write(Paths.get("totals.txt"), xx.getBytes(), StandardOpenOption.APPEND);
+                        }catch (IOException e) {
+                            //exception handling left as an exercise for the reader
+                        }
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -624,8 +635,8 @@ class Analyze {
                     }
                     Collections.sort(sortedout);
                     for (String s : sortedout) System.out.println(s);
-                    System.out.println(dfcoins.format(totprofit) + "\t$" + dfdollars.format(totprofit * bitcoinprice) + "\t" + "total");
-
+                    String xx=dfcoins.format(totprofit) + "\t$" + dfdollars.format(totprofit * bitcoinprice) + "\t" + "total";
+                    System.out.println(xx);
 
                     System.out.println("----------------------------");
                     System.out.println("buy low");
