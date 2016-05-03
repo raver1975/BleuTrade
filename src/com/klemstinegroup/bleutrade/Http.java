@@ -253,10 +253,10 @@ public class Http {
     //orderstatus (ALL, OK, OPEN, CANCELED)
     //ordertype (ALL, BUY, SELL)
 
-    public static ArrayList<Order> getOrders(String orderStatus) {
+    public static ArrayList<Order> getOrders(String orderStatus,String market) {
         JSONObject json = null;
         HashMap<String, String> params = new HashMap<String, String>();
-        params.put("market", "ALL");
+        params.put("market", market);
         params.put("orderstatus", orderStatus);
         params.put("ordertype", "ALL");
 

@@ -75,7 +75,7 @@ class Analyze {
                                 if (id != -1)
                                     top:
                                             for (int i = 0; i < 10; i++) {
-                                                ArrayList<Order> orders = Http.getOrders("OK");
+                                                ArrayList<Order> orders = Http.getOrders("OK",market);
                                                 for (Order o : orders) {
                                                     if (o.getOrderId().equals(id + "") || debug) {
                                                         System.out.println("order successful! " + id);
@@ -132,7 +132,7 @@ class Analyze {
                                 System.out.println("order number=" + id);
                                 if (id != -1)
                                     top:for (int i = 0; i < 10; i++) {
-                                        ArrayList<Order> orders = Http.getOrders("OK");
+                                        ArrayList<Order> orders = Http.getOrders("OK",market);
                                         for (Order o : orders) {
                                             if (o.getOrderId().equals(id + "") || debug) {
                                                 System.out.println("order successful!");
