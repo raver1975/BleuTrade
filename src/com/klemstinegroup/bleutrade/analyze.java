@@ -3,9 +3,9 @@ package com.klemstinegroup.bleutrade;
 
 import com.klemstinegroup.bleutrade.json.*;
 import com.klemstinegroup.bleutrade.json.Currency;
-import edu.princeton.cs.algs4.BellmanFordSP;
-import edu.princeton.cs.algs4.DirectedEdge;
-import edu.princeton.cs.algs4.EdgeWeightedDigraph;
+//import edu.princeton.cs.algs4.BellmanFordSP;
+//import edu.princeton.cs.algs4.DirectedEdge;
+//import edu.princeton.cs.algs4.EdgeWeightedDigraph;
 //import edu.princeton.cs.algs4.StdOut;
 
 import java.io.*;
@@ -488,8 +488,8 @@ class Analyze {
                     }
 
 //                    negativeCycles=new ArrayList<String>();
-                    ArrayList<String> negativeCycles = negativeCycle(hm);
-                    Collections.sort(negativeCycles);
+//                    ArrayList<String> negativeCycles = negativeCycle(hm);
+//                    Collections.sort(negativeCycles);
 
                     //negative cycles
 //                    System.out.println("----------------------------");
@@ -532,7 +532,7 @@ class Analyze {
                                         double coinshave = b.getAvailable();
                                         double coinrate = td.bid;
                                         if (!td.base.equals("BTC")) {
-//                                            coinrate*=tickerHM.get(td.base+"_"+"BTC").getBid();
+                                            coinrate*=tickerHM.get(td.base+"_"+"BTC").getBid();
                                             continue;
                                         }
                                         System.out.print("\t" + dfcoins.format(td.bid * coinshave) + "\t$" + dfdollars.format(coinshave * coinrate * bitcoinprice));
@@ -566,21 +566,21 @@ class Analyze {
                     System.out.println("Holdings");
                     HashMap<String, Double> hmprice = new HashMap<String, Double>();
                     HashMap<String, Double> hmquantity = new HashMap<String, Double>();
-                    HashMap<String, Double> hmminsize = new HashMap<String, Double>();
+//                    HashMap<String, Double> hmminsize = new HashMap<String, Double>();
 
                     for (Order o : history) {
                         String g = o.getExchange();
-                        for (Market mk : markets) {
-                            if (mk.getMarketName().equals(g)) {
-                                if (!hmprice.containsKey(g)) hmprice.put(g, 0d);
-                                if (!hmquantity.containsKey(g)) hmquantity.put(g, 0d);
-                                double quant = o.getQuantity() * o.getPrice();
-                                hmprice.put(g, hmprice.get(g) + quant);
-                                hmquantity.put(g, hmquantity.get(g) + o.getQuantity());
-                                hmminsize.put(g, mk.getMinTradeSize());
-                                break;
-                            }
-                        }
+//                        for (Market mk : markets) {
+//                            if (mk.getMarketName().equals(g)) {
+                        if (!hmprice.containsKey(g)) hmprice.put(g, 0d);
+                        if (!hmquantity.containsKey(g)) hmquantity.put(g, 0d);
+                        double quant = o.getQuantity() * o.getPrice();
+                        hmprice.put(g, hmprice.get(g) + quant);
+                        hmquantity.put(g, hmquantity.get(g) + o.getQuantity());
+//                        hmminsize.put(g, mk.getMinTradeSize());
+                        break;
+//                            }
+//                        }
                     }
 
                     HashMap<String, Double> comprofit = new HashMap<String, Double>();
@@ -745,7 +745,7 @@ class Analyze {
                         }
 
                         octot.put(h, octot.get(h) + (o.getPrice() * o.getQuantity()));
-                        ocqua.put(h, ocqua.get(o.getExchange()) + o.getQuantity());
+                        ocqua.put(h, ocqua.get(h) + o.getQuantity());
                     }
                     history.clear();
 
@@ -804,78 +804,78 @@ class Analyze {
 
     }
 
-    public ArrayList<String> negativeCycle(HashMap<String, Double> hm) {
-        ArrayList<String> al = new ArrayList<String>();
-        HashSet<String> hs = new HashSet();
-        for (String g : hm.keySet()) {
-            String g1 = g.substring(0, g.indexOf('_'));
-            String g2 = g.substring(g.indexOf('_') + 1);
-            hs.add(g1);
-            hs.add(g2);
-        }
-        int V = hs.size();
-        ArrayList<String> name = new ArrayList<String>();
-        Iterator<String> iter = hs.iterator();
-        while (iter.hasNext()) {
-            String s = iter.next();
-            name.add(s);
-        }
-
-        EdgeWeightedDigraph G = new EdgeWeightedDigraph(V);
-
-        for (Market m : markets) {
-            String g = m.getMarketName();
-            String g1 = g.substring(0, g.indexOf('_'));
-            String g2 = g.substring(g.indexOf('_') + 1);
-            if (hm.get(g1 + "_" + g2) != null) {
-                DirectedEdge e1 = new DirectedEdge(name.indexOf(g1), name.indexOf(g2), -Math.log(hm.get(g1 + "_" + g2)));
-                DirectedEdge e2 = new DirectedEdge(name.indexOf(g2), name.indexOf(g1), -Math.log(hm.get(g2 + "_" + g1)));
-                G.addEdge(e1);
-                G.addEdge(e2);
-            }
-        }
-
-        BellmanFordSP spt = new BellmanFordSP(G, 0);
-        if (spt.hasNegativeCycle()) {
-            double stake = 1000.0;
-            boolean first = false;
-            String remove1 = null;
-            String remove2 = null;
-
-            String last = null;
-            String list = "";
-
-            for (DirectedEdge e : spt.negativeCycle()) {
-                if (!first) {
-                    first = true;
-                    remove1 = name.get(e.from()) + "_" + name.get(e.to());
-                    remove2 = name.get(e.to()) + "_" + name.get(e.from());
-                }
-
-                //StdOut.printf("%10.5f %s ", stake, name.get(e.from()));
-                stake -= .0025 * stake;
-                stake *= Math.exp(-e.weight());
-
-
-                //StdOut.printf("= %10.5f %s\n", stake, name.get(e.to()));
-
-                list += name.get(e.from()) + "_";
-                last = name.get(e.to());
-
-            }
-            list += last;
-            String g = String.format("%06.2f", (stake - 1000d) / 10d);
-            list = g + " " + list;
-            if (stake > 1000) {
-                al.add(list);
-                //System.out.println("cycle: " + list);
-            }
-            hm.remove(remove1);
-            hm.remove(remove2);
-            al.addAll(negativeCycle(hm));
-        }
-        return al;
-    }
+//    public ArrayList<String> negativeCycle(HashMap<String, Double> hm) {
+//        ArrayList<String> al = new ArrayList<String>();
+//        HashSet<String> hs = new HashSet();
+//        for (String g : hm.keySet()) {
+//            String g1 = g.substring(0, g.indexOf('_'));
+//            String g2 = g.substring(g.indexOf('_') + 1);
+//            hs.add(g1);
+//            hs.add(g2);
+//        }
+//        int V = hs.size();
+//        ArrayList<String> name = new ArrayList<String>();
+//        Iterator<String> iter = hs.iterator();
+//        while (iter.hasNext()) {
+//            String s = iter.next();
+//            name.add(s);
+//        }
+//
+//        EdgeWeightedDigraph G = new EdgeWeightedDigraph(V);
+//
+//        for (Market m : markets) {
+//            String g = m.getMarketName();
+//            String g1 = g.substring(0, g.indexOf('_'));
+//            String g2 = g.substring(g.indexOf('_') + 1);
+//            if (hm.get(g1 + "_" + g2) != null) {
+//                DirectedEdge e1 = new DirectedEdge(name.indexOf(g1), name.indexOf(g2), -Math.log(hm.get(g1 + "_" + g2)));
+//                DirectedEdge e2 = new DirectedEdge(name.indexOf(g2), name.indexOf(g1), -Math.log(hm.get(g2 + "_" + g1)));
+//                G.addEdge(e1);
+//                G.addEdge(e2);
+//            }
+//        }
+//
+//        BellmanFordSP spt = new BellmanFordSP(G, 0);
+//        if (spt.hasNegativeCycle()) {
+//            double stake = 1000.0;
+//            boolean first = false;
+//            String remove1 = null;
+//            String remove2 = null;
+//
+//            String last = null;
+//            String list = "";
+//
+//            for (DirectedEdge e : spt.negativeCycle()) {
+//                if (!first) {
+//                    first = true;
+//                    remove1 = name.get(e.from()) + "_" + name.get(e.to());
+//                    remove2 = name.get(e.to()) + "_" + name.get(e.from());
+//                }
+//
+//                StdOut.printf("%10.5f %s ", stake, name.get(e.from()));
+//                stake -= .0025 * stake;
+//                stake *= Math.exp(-e.weight());
+//
+//
+//                StdOut.printf("= %10.5f %s\n", stake, name.get(e.to()));
+//
+//                list += name.get(e.from()) + "_";
+//                last = name.get(e.to());
+//
+//            }
+//            list += last;
+//            String g = String.format("%06.2f", (stake - 1000d) / 10d);
+//            list = g + " " + list;
+//            if (stake > 1000) {
+//                al.add(list);
+//                System.out.println("cycle: " + list);
+//            }
+//            hm.remove(remove1);
+//            hm.remove(remove2);
+//            al.addAll(negativeCycle(hm));
+//        }
+//        return al;
+//    }
 
 
 //    //use for SQL command SELECT

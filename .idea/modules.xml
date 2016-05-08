@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/BleuTrade.iml" filepath="$PROJECT_DIR$/BleuTrade.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BleuTrade.iml" filepath="$PROJECT_DIR$/.idea/modules/BleuTrade.iml" />
     </modules>
   </component>
 </project>
