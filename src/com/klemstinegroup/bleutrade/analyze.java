@@ -234,8 +234,11 @@ class Analyze {
 
                                 ArrayList<Order> remove = new ArrayList<Order>();
                                 for (Order o : history) {
-                                    //System.out.println(":"+market+":"+o.getExchange());
-                                    if (o.getExchange().startsWith(market+"_")) remove.add(o);
+                                    System.out.println(":"+market+":"+o.getExchange());
+                                    if (o.getExchange().startsWith(market+"_")) {
+                                        System.out.println("removing "+o.getExchange());
+                                        remove.add(o);
+                                    }
                                 }
                                 for (Order o : remove) history.remove(o);
                                 try {

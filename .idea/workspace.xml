@@ -7,8 +7,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f06d307d-765b-4f84-ac8a-c7656b8b2f0c" name="Default" comment="hmm">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/algs4.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config.properties" afterPath="$PROJECT_DIR$/config.properties" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/artifacts/BleuTrade_jar.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/BleuTrade/META-INF/MANIFEST.MF" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/klemstinegroup/bleutrade/analyze.java" afterPath="$PROJECT_DIR$/src/com/klemstinegroup/bleutrade/analyze.java" />
     </list>
     <ignored path="BleuTrade.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -37,45 +40,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Analyze.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Analyze.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/klemstinegroup/bleutrade/Analyze.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="356">
-              <caret line="235" column="57" selection-start-line="235" selection-start-column="57" selection-end-line="235" selection-end-column="57" />
+            <state relative-caret-position="441">
+              <caret line="240" column="37" selection-start-line="240" selection-start-column="37" selection-end-line="240" selection-end-column="37" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#658#670#0" expanded="true" />
-                <element signature="e#718#725#0" expanded="true" />
-                <element signature="e#779#789#0" expanded="true" />
-                <element signature="e#847#863#0" expanded="true" />
-                <element signature="e#912#920#0" expanded="true" />
-                <element signature="e#977#985#0" expanded="true" />
-                <element signature="e#1047#1063#0" expanded="true" />
-                <element signature="e#1118#1138#0" expanded="true" />
-                <element signature="e#1193#1213#0" expanded="true" />
-                <element signature="e#1268#1288#0" expanded="true" />
-                <element signature="e#1584#1601#0" expanded="true" />
-                <element signature="e#7721#7728#0" expanded="true" />
-                <element signature="e#11835#11842#0" expanded="true" />
-                <element signature="e#14033#14040#0" expanded="true" />
-                <element signature="e#16446#16456#0" expanded="true" />
-                <element signature="e#16906#16914#0" expanded="true" />
-                <element signature="e#17165#17173#0" expanded="true" />
-                <element signature="e#17440#17448#0" expanded="true" />
-                <element signature="e#18250#18262#0" expanded="true" />
-                <element signature="e#20235#20243#0" expanded="true" />
-                <element signature="e#20319#20327#0" expanded="true" />
-                <element signature="e#22272#22288#0" expanded="true" />
-                <element signature="e#26591#26607#0" expanded="true" />
-                <element signature="e#26679#26695#0" expanded="true" />
-                <element signature="e#27637#27653#0" expanded="true" />
-                <element signature="e#27719#27727#0" expanded="true" />
-                <element signature="e#27790#27798#0" expanded="true" />
-                <element signature="e#27860#27868#0" expanded="true" />
-                <element signature="e#27935#27943#0" expanded="true" />
-                <element signature="e#36439#36455#0" expanded="true" />
-                <element signature="e#36522#36538#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MANIFEST.MF" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/META-INF/MANIFEST.MF">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -103,7 +85,7 @@
       <file leaf-file-name="Currency.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/klemstinegroup/bleutrade/json/Currency.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
+            <state relative-caret-position="272">
               <caret line="24" column="28" selection-start-line="24" selection-start-column="28" selection-end-line="24" selection-end-column="28" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -342,9 +324,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -387,7 +366,67 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
+              <option name="myItemId" value="META-INF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BleuTrade" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BleuTrade" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="build" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="classes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="production" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BleuTrade" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BleuTrade" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BleuTrade" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="build" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="classes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="production" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BleuTrade" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="klemstinegroup" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -405,12 +444,49 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="libs" />
+              <option name="myItemId" value="build" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="classes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="artifacts" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BleuTrade_jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BleuTrade" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BleuTrade" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="build" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="classes" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="artifacts" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -657,6 +733,7 @@
       <setting name="cmdLine" value="run-app" />
       <setting name="passParentEnv" value="true" />
       <setting name="launchBrowser" value="true" />
+      <setting name="depsClasspath" value="false" />
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <method />
     </configuration>
@@ -855,6 +932,12 @@
       <method />
     </configuration>
     <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
       <method />
     </configuration>
     <configuration default="true" type="js.build_tools.npm" factoryName="npm">
@@ -930,6 +1013,7 @@
       <workItem from="1462602282793" duration="199000" />
       <workItem from="1462708087197" duration="953000" />
       <workItem from="1462709075023" duration="2723000" />
+      <workItem from="1462711905100" duration="1142000" />
     </task>
     <task id="LOCAL-00001" summary="hmm">
       <created>1462709539269</created>
@@ -942,15 +1026,15 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4596000" />
+    <option name="totallyTimeSpent" value="5738000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32936078" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -962,7 +1046,6 @@
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -974,6 +1057,7 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -1006,37 +1090,50 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#658#670#0" expanded="true" />
-            <element signature="e#718#725#0" expanded="true" />
-            <element signature="e#779#789#0" expanded="true" />
-            <element signature="e#847#863#0" expanded="true" />
-            <element signature="e#912#920#0" expanded="true" />
-            <element signature="e#977#985#0" expanded="true" />
-            <element signature="e#1047#1063#0" expanded="true" />
-            <element signature="e#1118#1138#0" expanded="true" />
-            <element signature="e#1193#1213#0" expanded="true" />
-            <element signature="e#1268#1288#0" expanded="true" />
-            <element signature="e#1584#1601#0" expanded="true" />
-            <element signature="e#7721#7728#0" expanded="true" />
-            <element signature="e#11835#11842#0" expanded="true" />
-            <element signature="e#14033#14040#0" expanded="true" />
-            <element signature="e#16446#16456#0" expanded="true" />
-            <element signature="e#16906#16914#0" expanded="true" />
-            <element signature="e#17165#17173#0" expanded="true" />
-            <element signature="e#17440#17448#0" expanded="true" />
-            <element signature="e#18250#18262#0" expanded="true" />
-            <element signature="e#20235#20243#0" expanded="true" />
-            <element signature="e#20319#20327#0" expanded="true" />
-            <element signature="e#22272#22288#0" expanded="true" />
-            <element signature="e#26591#26607#0" expanded="true" />
-            <element signature="e#26679#26695#0" expanded="true" />
-            <element signature="e#27637#27653#0" expanded="true" />
-            <element signature="e#27719#27727#0" expanded="true" />
-            <element signature="e#27790#27798#0" expanded="true" />
-            <element signature="e#27860#27868#0" expanded="true" />
-            <element signature="e#27935#27943#0" expanded="true" />
-            <element signature="e#36439#36455#0" expanded="true" />
-            <element signature="e#36522#36538#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/klemstinegroup/bleutrade/Http.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="35" selection-start-line="5" selection-start-column="33" selection-end-line="5" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="10" selection-start-line="0" selection-start-column="10" selection-end-line="0" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/klemstinegroup/bleutrade/json/Currency.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="24" column="28" selection-start-line="24" selection-start-column="28" selection-end-line="24" selection-end-column="28" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/BleuTrade.iml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="9" selection-start-line="11" selection-start-column="9" selection-end-line="11" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/com/klemstinegroup/bleutrade/Analyze.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1047,37 +1144,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#658#670#0" expanded="true" />
-            <element signature="e#718#725#0" expanded="true" />
-            <element signature="e#779#789#0" expanded="true" />
-            <element signature="e#847#863#0" expanded="true" />
-            <element signature="e#912#920#0" expanded="true" />
-            <element signature="e#977#985#0" expanded="true" />
-            <element signature="e#1047#1063#0" expanded="true" />
-            <element signature="e#1118#1138#0" expanded="true" />
-            <element signature="e#1193#1213#0" expanded="true" />
-            <element signature="e#1268#1288#0" expanded="true" />
-            <element signature="e#1584#1601#0" expanded="true" />
-            <element signature="e#7721#7728#0" expanded="true" />
-            <element signature="e#11835#11842#0" expanded="true" />
-            <element signature="e#14033#14040#0" expanded="true" />
-            <element signature="e#16446#16456#0" expanded="true" />
-            <element signature="e#16906#16914#0" expanded="true" />
-            <element signature="e#17165#17173#0" expanded="true" />
-            <element signature="e#17440#17448#0" expanded="true" />
-            <element signature="e#18250#18262#0" expanded="true" />
-            <element signature="e#20235#20243#0" expanded="true" />
-            <element signature="e#20319#20327#0" expanded="true" />
-            <element signature="e#22272#22288#0" expanded="true" />
-            <element signature="e#26591#26607#0" expanded="true" />
-            <element signature="e#26679#26695#0" expanded="true" />
-            <element signature="e#27637#27653#0" expanded="true" />
-            <element signature="e#27719#27727#0" expanded="true" />
-            <element signature="e#27790#27798#0" expanded="true" />
-            <element signature="e#27860#27868#0" expanded="true" />
-            <element signature="e#27935#27943#0" expanded="true" />
-            <element signature="e#36439#36455#0" expanded="true" />
-            <element signature="e#36522#36538#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1092,7 +1158,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/klemstinegroup/bleutrade/json/Currency.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
+        <state relative-caret-position="272">
           <caret line="24" column="28" selection-start-line="24" selection-start-column="28" selection-end-line="24" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -1118,42 +1184,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/klemstinegroup/bleutrade/Analyze.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="356">
-          <caret line="235" column="57" selection-start-line="235" selection-start-column="57" selection-end-line="235" selection-end-column="57" />
+        <state relative-caret-position="441">
+          <caret line="240" column="37" selection-start-line="240" selection-start-column="37" selection-end-line="240" selection-end-column="37" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#658#670#0" expanded="true" />
-            <element signature="e#718#725#0" expanded="true" />
-            <element signature="e#779#789#0" expanded="true" />
-            <element signature="e#847#863#0" expanded="true" />
-            <element signature="e#912#920#0" expanded="true" />
-            <element signature="e#977#985#0" expanded="true" />
-            <element signature="e#1047#1063#0" expanded="true" />
-            <element signature="e#1118#1138#0" expanded="true" />
-            <element signature="e#1193#1213#0" expanded="true" />
-            <element signature="e#1268#1288#0" expanded="true" />
-            <element signature="e#1584#1601#0" expanded="true" />
-            <element signature="e#7721#7728#0" expanded="true" />
-            <element signature="e#11835#11842#0" expanded="true" />
-            <element signature="e#14033#14040#0" expanded="true" />
-            <element signature="e#16446#16456#0" expanded="true" />
-            <element signature="e#16906#16914#0" expanded="true" />
-            <element signature="e#17165#17173#0" expanded="true" />
-            <element signature="e#17440#17448#0" expanded="true" />
-            <element signature="e#18250#18262#0" expanded="true" />
-            <element signature="e#20235#20243#0" expanded="true" />
-            <element signature="e#20319#20327#0" expanded="true" />
-            <element signature="e#22272#22288#0" expanded="true" />
-            <element signature="e#26591#26607#0" expanded="true" />
-            <element signature="e#26679#26695#0" expanded="true" />
-            <element signature="e#27637#27653#0" expanded="true" />
-            <element signature="e#27719#27727#0" expanded="true" />
-            <element signature="e#27790#27798#0" expanded="true" />
-            <element signature="e#27860#27868#0" expanded="true" />
-            <element signature="e#27935#27943#0" expanded="true" />
-            <element signature="e#36439#36455#0" expanded="true" />
-            <element signature="e#36522#36538#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/META-INF/MANIFEST.MF">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1235,6 +1278,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
+          <last-edited>algs4</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
