@@ -33,7 +33,7 @@ class Analyze {
 
     private double bitcoinprice;
 
-    DecimalFormat dfdollars = new DecimalFormat("+000.00;-000.00");
+    DecimalFormat dfdollars = new DecimalFormat("+0000.00;-0000.00");
     static DecimalFormat dfcoins = new DecimalFormat("+0000.00000000;-0000.00000000");
     private ArrayList<Balance> balance;
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
@@ -235,7 +235,7 @@ class Analyze {
                                 ArrayList<Order> remove = new ArrayList<Order>();
                                 for (Order o : history) {
                                     //System.out.println(":"+market+":"+o.getExchange());
-                                    if (o.getExchange().equals(market)) remove.add(o);
+                                    if (o.getExchange().startsWith(market+"_")) remove.add(o);
                                 }
                                 for (Order o : remove) history.remove(o);
                                 try {
@@ -520,30 +520,22 @@ class Analyze {
                         for (Balance b : balance) {
                             if (b.getAvailable() * bitcoinprice > 0.000000009d) {
                                 System.out.print("  " + b.getCurrency() + "\t" + dfcoins.format(b.getAvailable()));
-
                                 if (b.getCurrency().equals("BTC")) {
                                     System.out.print("\t" + dfcoins.format(b.getAvailable()) + "\t$" + dfdollars.format(b.getAvailable() * bitcoinprice));
                                     bittot += b.getAvailable();
-                                }
-                                for (int i = saved.size() - 1; i > -1; i--) {
-                                    TickerData td = saved.get(i);
+                                } else {
+                                    double coinshave = b.getAvailable();
+                                    double coinrate = tickerHM.get(b.getCurrency() + "_BTC").getAsk();
+                                    double cointotal = coinrate * coinshave;
 
-                                    if (td.coin.equals(b.getCurrency())) {
-                                        double coinshave = b.getAvailable();
-                                        double coinrate = td.bid;
-                                        if (!td.base.equals("BTC")) {
-                                            coinrate*=tickerHM.get(td.base+"_"+"BTC").getBid();
-                                            continue;
-                                        }
-                                        System.out.print("\t" + dfcoins.format(td.bid * coinshave) + "\t$" + dfdollars.format(coinshave * coinrate * bitcoinprice));
-                                        bittot += td.bid * b.getAvailable();
-                                        if (b.getCurrency().equals("BLEU")) {
-                                            bl = b.getAvailable() * td.bid;
-                                        }
-                                        break;
+                                    System.out.print("\t" + dfcoins.format(cointotal) + "\t$" + dfdollars.format(cointotal * bitcoinprice));
+                                    bittot += cointotal;
+                                    if (b.getCurrency().equals("BLEU")) {
+                                        bl = cointotal;
                                     }
 
                                 }
+
                                 System.out.println();
                             }
                         }
@@ -564,23 +556,23 @@ class Analyze {
 
                     System.out.println("----------------------------");
                     System.out.println("Holdings");
-                    HashMap<String, Double> hmprice = new HashMap<String, Double>();
+                    HashMap<String, Double> hmtotal = new HashMap<String, Double>();
                     HashMap<String, Double> hmquantity = new HashMap<String, Double>();
 //                    HashMap<String, Double> hmminsize = new HashMap<String, Double>();
 
                     for (Order o : history) {
                         String g = o.getExchange();
-//                        for (Market mk : markets) {
-//                            if (mk.getMarketName().equals(g)) {
-                        if (!hmprice.containsKey(g)) hmprice.put(g, 0d);
-                        if (!hmquantity.containsKey(g)) hmquantity.put(g, 0d);
-                        double quant = o.getQuantity() * o.getPrice();
-                        hmprice.put(g, hmprice.get(g) + quant);
-                        hmquantity.put(g, hmquantity.get(g) + o.getQuantity());
-//                        hmminsize.put(g, mk.getMinTradeSize());
-                        break;
-//                            }
-//                        }
+                        for (Market mk : markets) {
+                            if (mk.getMarketName().equals(g)) {
+                                if (!hmtotal.containsKey(g)) hmtotal.put(g, 0d);
+                                if (!hmquantity.containsKey(g)) hmquantity.put(g, 0d);
+                                double price = o.getPrice();
+                                double quant = o.getQuantity();
+                                hmtotal.put(g, hmtotal.get(g) + price*quant);
+                                hmquantity.put(g, hmquantity.get(g) + quant);
+                                break;
+                            }
+                        }
                     }
 
                     HashMap<String, Double> comprofit = new HashMap<String, Double>();
@@ -593,7 +585,7 @@ class Analyze {
                     double totprofit = 0d;
                     for (String h : hmquantity.keySet()) {
                         double hmqu = hmquantity.get(h);
-                        double pricethen = hmprice.get(h);
+                        double pricethen = hmtotal.get(h);
                         double pricenow = tickerHM.get(h).getBid() * hmqu;
                         String g1 = h.substring(0, h.indexOf('_'));
                         String g2 = h.substring(h.indexOf('_') + 1);
