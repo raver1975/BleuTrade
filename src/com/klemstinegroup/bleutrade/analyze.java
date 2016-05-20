@@ -47,6 +47,8 @@ class Analyze {
     private double sellfactor = 2d;
     private boolean buyBleu = false;
     private boolean donotbuyconstraint = true;
+    public static String apikey=null;
+    public static String apisecret=null;
 
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
@@ -193,6 +195,8 @@ class Analyze {
             buyfactor = Double.parseDouble(prop.getProperty("buyfactor"));
             sellfactor = Double.parseDouble(prop.getProperty("sellfactor"));
             donotbuyconstraint = Boolean.parseBoolean(prop.getProperty("donotbuyconstraint"));
+            apikey=prop.getProperty("apikey");
+            apisecret=prop.getProperty("apisecret");
             System.out.println("debug=" + debug);
             System.out.println("buyBleu=" + buyBleu);
             System.out.println("donotbuyconstraint=" + donotbuyconstraint);
@@ -384,6 +388,7 @@ class Analyze {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    if (temp2==null)continue;
                     ArrayList<Market> temp3 = new ArrayList<Market>();
                     for (Market m : temp2) {
                         if (m.getIsActive()) temp3.add(m);
@@ -403,6 +408,7 @@ class Analyze {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    if (tickers==null||tickerHM==null||tickerHM.isEmpty())continue;
 
                     long time = System.currentTimeMillis();
                     for (String s : tickerHM.keySet()) {
