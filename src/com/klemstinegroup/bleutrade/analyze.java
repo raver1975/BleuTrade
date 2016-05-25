@@ -388,7 +388,22 @@ class Analyze {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if (temp2==null)continue;
+                    if (temp2==null){
+                        if (temp1 == null) {
+                            System.out.println("Connection problems?");
+                            int cnt = 60;
+                            try {
+                                while (cnt > 0) {
+                                    System.out.print((cnt--) + " ");
+                                    Thread.sleep(1000);
+                                }
+                                System.out.println();
+                                continue;
+                            } catch (Exception e) {
+
+                            }
+                        }
+                    }
                     ArrayList<Market> temp3 = new ArrayList<Market>();
                     for (Market m : temp2) {
                         if (m.getIsActive()) temp3.add(m);
@@ -408,7 +423,20 @@ class Analyze {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if (tickers==null||tickerHM==null||tickerHM.isEmpty())continue;
+                    if (tickers==null||tickerHM==null||tickerHM.isEmpty()){ if (temp1 == null) {
+                        System.out.println("Connection problems?");
+                        int cnt = 60;
+                        try {
+                            while (cnt > 0) {
+                                System.out.print((cnt--) + " ");
+                                Thread.sleep(1000);
+                            }
+                            System.out.println();
+                            continue;
+                        } catch (Exception e) {
+
+                        }
+                    }}
 
                     long time = System.currentTimeMillis();
                     for (String s : tickerHM.keySet()) {
@@ -421,6 +449,7 @@ class Analyze {
                         String g1 = s.substring(0, s.indexOf('_'));
                         String g2 = s.substring(s.indexOf('_') + 1);
                         Ticker t = tickerHM.get(s);
+                        if (t==null)continue;
                         double bid = t.getBid();
                         double ask = t.getAsk();
                         double last = t.getLast();
@@ -516,8 +545,25 @@ class Analyze {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
                     try {
                         balance = Http.getBalances();
+                        if (balance==null){
+                            if (temp1 == null) {
+                                System.out.println("Connection problems?");
+                                int cnt = 60;
+                                try {
+                                    while (cnt > 0) {
+                                        System.out.print((cnt--) + " ");
+                                        Thread.sleep(1000);
+                                    }
+                                    System.out.println();
+                                    continue;
+                                } catch (Exception e) {
+
+                                }
+                            }
+                        }
                         for (Balance b : balance) {
                             balanceHM.put(b.getCurrency(), b);
                         }
