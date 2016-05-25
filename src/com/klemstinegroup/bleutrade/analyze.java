@@ -452,7 +452,8 @@ class Analyze {
                         if (t==null)continue;
                         double bid = t.getBid();
                         double ask = t.getAsk();
-                        double last = t.getLast();
+                        double last = 0;
+                        if (t.getLast()!=null)last=t.getLast();
 //                        String bidS = dfdollars.format(new BigDecimal(t.getBid()));
 //                        String askS = dfdollars.format(new BigDecimal(t.getAsk()));
 //                        String lastS = dfdollars.format(new BigDecimal(t.getLast()));
