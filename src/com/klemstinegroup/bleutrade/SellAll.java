@@ -4,9 +4,14 @@ import com.klemstinegroup.bleutrade.json.Balance;
 import com.klemstinegroup.bleutrade.json.Market;
 import com.klemstinegroup.bleutrade.json.Ticker;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 /**
  * Created by Paul on 4/13/2016.
@@ -17,6 +22,20 @@ public class SellAll {
 
 
     public static void main(String[] args) {
+        Properties prop = new Properties();
+
+        InputStream input;
+        try {
+            input = new FileInputStream("config.properties");
+            prop.load(input);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Analyze.apikey=prop.getProperty("apikey");
+        Analyze.apisecret=prop.getProperty("apisecret");
         ArrayList<Market> markets = new ArrayList<Market>();
         ArrayList<Market> temp2 = new ArrayList<Market>();
         HashMap<String, Ticker> tickerHM = new HashMap<String, Ticker>();
