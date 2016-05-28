@@ -382,7 +382,7 @@ class Analyze {
                         currencyCost.put(c.getCurrency(), c.getTxFee());
                     }
 
-                    ArrayList<Market> temp2 = new ArrayList<Market>();
+                    ArrayList<Market> temp2 = null;
                     try {
                         temp2 = Http.getMarkets();
                     } catch (Exception e) {
