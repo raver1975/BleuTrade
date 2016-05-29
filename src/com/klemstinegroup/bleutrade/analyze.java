@@ -60,7 +60,14 @@ class Analyze {
             System.out.println("error args=" + split.length);
         } else {
             String market = split[1];
-            double quantity = Double.parseDouble(split[2]);
+            double quantity=0;
+            try {
+                quantity = Double.parseDouble(split[2]);
+            }
+            catch(NumberFormatException e){
+                e.printStackTrace();
+                return null;
+            }
             for (Market mk : markets) {
                 if (mk.getMarketName().equals(market)) {
                     double rate = tickerHM.get(mk.getMarketName()).getAsk();
@@ -118,7 +125,14 @@ class Analyze {
         } else {
             String market = split[1];
             if (market.contains("BLEU")) return null;
-            double quantity = Double.parseDouble(split[2]);
+            double quantity=0;
+            try {
+                quantity = Double.parseDouble(split[2]);
+            }
+            catch(NumberFormatException e){
+                e.printStackTrace();
+                return null;
+            }
             for (Market mk : markets) {
                 if (mk.getMarketName().equals(market)) {
                     double rate = tickerHM.get(mk.getMarketName()).getBid();
