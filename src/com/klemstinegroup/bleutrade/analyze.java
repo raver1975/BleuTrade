@@ -726,6 +726,16 @@ class Analyze {
                                 int cnt = 0;
                                 while (cnt++ < 10000000 && total * rate < 0.00000001d && total > 0.000000009d)
                                     total *= 1.1d;
+                                if (mk.getBaseCurrency().equals("BTC"))if (total < 0.00001d) {
+
+                                    total = 0.00001d ;
+                                }
+
+                                if (mk.getBaseCurrency().equals("DOGE"))if (total < 10d) {
+
+                                    total = 10d;
+                                }
+
                                 total *= buyfactor;
 //                                    if (!mk.getBaseCurrency().equals("BTC"))
 //                                        total /= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
