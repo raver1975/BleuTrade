@@ -766,9 +766,17 @@ class Analyze {
 //                                if (!mk.getBaseCurrency().equals("BTC"))
 //                                    rate *= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
                                 double total = mk.getMinTradeSize();// / rate;
-                                if (total * rate < 0.00001d) {
+                                if (mk.getBaseCurrency().equals("BTC"))if (total * rate < 0.00001d) {
+
                                     total = 0.00001d / rate;
                                 }
+
+                                if (mk.getBaseCurrency().equals("DOGE"))if (total * rate < 10d) {
+
+                                    total = 10d/ rate;
+                                }
+
+
                                 total *= sellfactor;
                                 if (goodtoorder.contains(mk.getMarketCurrency())) {
                                     System.out.println(s);
