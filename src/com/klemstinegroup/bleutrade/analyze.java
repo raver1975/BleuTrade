@@ -595,7 +595,7 @@ class Analyze {
                                     bittot += b.getAvailable();
                                 } else {
                                     double coinshave = b.getAvailable();
-                                    double coinrate = tickerHM.get(b.getCurrency() + "_BTC").getAsk();
+                                    double coinrate = tickerHM.get(b.getCurrency() + "_BTC").getBid();
                                     double cointotal = coinrate * coinshave;
 
                                     System.out.print("\t" + dfcoins.format(cointotal) + "\t$" + dfdollars.format(cointotal * bitcoinprice));
