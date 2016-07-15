@@ -18,6 +18,7 @@ import java.util.*;
 
 class Analyze {
 
+
     //    private Server hsqlServer;
 //    private  Connection conn;
     ArrayList<TickerData> saved = new ArrayList<TickerData>();
@@ -47,6 +48,7 @@ class Analyze {
     private double sellfactor = 2d;
     private boolean buyBleu = false;
     private boolean donotbuyconstraint = true;
+    private double bleuBuyMult;
     public static String apikey=null;
     public static String apisecret=null;
 
@@ -204,6 +206,7 @@ class Analyze {
             prop.load(input);
             debug = Boolean.parseBoolean(prop.getProperty("debug"));
             buyBleu = Boolean.parseBoolean(prop.getProperty("buyBleu"));
+            bleuBuyMult= Double.parseDouble(prop.getProperty("bleuBuyMult"));
             sellabove = Double.parseDouble(prop.getProperty("sellabove"));
             donotbuybelow = Double.parseDouble(prop.getProperty("donotbuybelow"));
             buyfactor = Double.parseDouble(prop.getProperty("buyfactor"));
@@ -213,11 +216,13 @@ class Analyze {
             apisecret=prop.getProperty("apisecret");
             System.out.println("debug=" + debug);
             System.out.println("buyBleu=" + buyBleu);
+            System.out.println("bleuBuyMult=" + bleuBuyMult);
             System.out.println("donotbuyconstraint=" + donotbuyconstraint);
             System.out.println("sellabove=" + sellabove);
             System.out.println("donotbuybelow=" + donotbuybelow);
             System.out.println("buyfactor=" + buyfactor);
             System.out.println("sellfactor=" + sellfactor);
+            System.out.println("sellfactor=" + donotbuyconstraint);
 
 
         } catch (IOException e) {
@@ -714,7 +719,7 @@ class Analyze {
                                 while (cnt++ < 10000000 && total * rate < 0.00000001d && total > 0.000000009d)
                                     total *= 1.1d;
                                 //total *= buyfactor;
-                                total *= 1000;
+                                total *= bleuBuyMult;
                                 Balance b = balanceHM.get(mk.getBaseCurrency());
                                 System.out.println(dfcoins.format(total) + " " + mk.getMarketCurrency() + " costs :" + dfcoins.format(total * rate) + " " + mk.getBaseCurrency() + "\t" + "have:" + dfcoins.format(b.getAvailable()) + " " + mk.getBaseCurrency());
                                 Order o1 = buy("buy BLEU_BTC " + dfcoins.format(total));
