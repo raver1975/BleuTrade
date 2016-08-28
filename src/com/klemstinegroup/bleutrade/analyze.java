@@ -34,7 +34,7 @@ class Analyze {
 
     private double bitcoinprice;
 
-    DecimalFormat dfdollars = new DecimalFormat("+0000.00;-0000.00");
+    static DecimalFormat dfdollars = new DecimalFormat("+0000.00;-0000.00");
     static DecimalFormat dfcoins = new DecimalFormat("+0000.00000000;-0000.00000000");
     private ArrayList<Balance> balance;
     private HashMap<String, Balance> balanceHM = new HashMap<String, Balance>();
@@ -49,8 +49,8 @@ class Analyze {
     private boolean buyBleu = false;
     private boolean donotbuyconstraint = true;
     private double bleuBuyMult;
-    public static String apikey=null;
-    public static String apisecret=null;
+    public static String apikey = null;
+    public static String apisecret = null;
 
 
     //CREATE TABLE TICKER(TIME BIGINT,COIN VARCHAR(10),BASE VARCHAR(10),BID DOUBLE,ASK DOUBLE,LAST DOUBLE)
@@ -62,11 +62,10 @@ class Analyze {
             System.out.println("error args=" + split.length);
         } else {
             String market = split[1];
-            double quantity=0;
+            double quantity = 0;
             try {
                 quantity = Double.parseDouble(split[2]);
-            }
-            catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 e.printStackTrace();
                 return null;
             }
@@ -127,11 +126,10 @@ class Analyze {
         } else {
             String market = split[1];
             if (market.contains("BLEU")) return null;
-            double quantity=0;
+            double quantity = 0;
             try {
                 quantity = Double.parseDouble(split[2]);
-            }
-            catch(NumberFormatException e){
+            } catch (NumberFormatException e) {
                 e.printStackTrace();
                 return null;
             }
@@ -206,14 +204,14 @@ class Analyze {
             prop.load(input);
             debug = Boolean.parseBoolean(prop.getProperty("debug"));
             buyBleu = Boolean.parseBoolean(prop.getProperty("buyBleu"));
-            bleuBuyMult= Double.parseDouble(prop.getProperty("bleuBuyMult"));
+            bleuBuyMult = Double.parseDouble(prop.getProperty("bleuBuyMult"));
             sellabove = Double.parseDouble(prop.getProperty("sellabove"));
             donotbuybelow = Double.parseDouble(prop.getProperty("donotbuybelow"));
             buyfactor = Double.parseDouble(prop.getProperty("buyfactor"));
             sellfactor = Double.parseDouble(prop.getProperty("sellfactor"));
             donotbuyconstraint = Boolean.parseBoolean(prop.getProperty("donotbuyconstraint"));
-            apikey=prop.getProperty("apikey");
-            apisecret=prop.getProperty("apisecret");
+            apikey = prop.getProperty("apikey");
+            apisecret = prop.getProperty("apisecret");
             System.out.println("debug=" + debug);
             System.out.println("buyBleu=" + buyBleu);
             System.out.println("bleuBuyMult=" + bleuBuyMult);
@@ -257,9 +255,9 @@ class Analyze {
 
                                 ArrayList<Order> remove = new ArrayList<Order>();
                                 for (Order o : history) {
-                                    System.out.println(":"+market+":"+o.getExchange());
-                                    if (o.getExchange().startsWith(market+"_")) {
-                                        System.out.println("removing "+o.getExchange());
+                                    System.out.println(":" + market + ":" + o.getExchange());
+                                    if (o.getExchange().startsWith(market + "_")) {
+                                        System.out.println("removing " + o.getExchange());
                                         remove.add(o);
                                     }
                                 }
@@ -407,7 +405,7 @@ class Analyze {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if (temp2==null){
+                    if (temp2 == null) {
                         if (temp1 == null) {
                             System.out.println("Connection problems?");
                             int cnt = 60;
@@ -442,20 +440,22 @@ class Analyze {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    if (tickers==null||tickerHM==null||tickerHM.isEmpty()){ if (temp1 == null) {
-                        System.out.println("Connection problems?");
-                        int cnt = 60;
-                        try {
-                            while (cnt > 0) {
-                                System.out.print((cnt--) + " ");
-                                Thread.sleep(1000);
-                            }
-                            System.out.println();
-                            continue;
-                        } catch (Exception e) {
+                    if (tickers == null || tickerHM == null || tickerHM.isEmpty()) {
+                        if (temp1 == null) {
+                            System.out.println("Connection problems?");
+                            int cnt = 60;
+                            try {
+                                while (cnt > 0) {
+                                    System.out.print((cnt--) + " ");
+                                    Thread.sleep(1000);
+                                }
+                                System.out.println();
+                                continue;
+                            } catch (Exception e) {
 
+                            }
                         }
-                    }}
+                    }
 
                     long time = System.currentTimeMillis();
                     for (String s : tickerHM.keySet()) {
@@ -468,11 +468,11 @@ class Analyze {
                         String g1 = s.substring(0, s.indexOf('_'));
                         String g2 = s.substring(s.indexOf('_') + 1);
                         Ticker t = tickerHM.get(s);
-                        if (t==null)continue;
+                        if (t == null) continue;
                         double bid = t.getBid();
                         double ask = t.getAsk();
                         double last = 0;
-                        if (t.getLast()!=null)last=t.getLast();
+                        if (t.getLast() != null) last = t.getLast();
 //                        String bidS = dfdollars.format(new BigDecimal(t.getBid()));
 //                        String askS = dfdollars.format(new BigDecimal(t.getAsk()));
 //                        String lastS = dfdollars.format(new BigDecimal(t.getLast()));
@@ -480,7 +480,8 @@ class Analyze {
                         saved.add(new TickerData(g1, g2, bid, ask, last, time));
 
                         for (TickerData td : saved) {
-                            if (td.time < System.currentTimeMillis() - (86400000 * 7)) {
+                            //set number of days here
+                            if (td.time < System.currentTimeMillis() - (86400000 * 1)) {
                                 remove.add(td);
                             } else {
                                 String bb = td.coin + "_" + td.base;
@@ -568,7 +569,7 @@ class Analyze {
 
                     try {
                         balance = Http.getBalances();
-                        if (balance==null){
+                        if (balance == null) {
                             if (temp1 == null) {
                                 System.out.println("Connection problems?");
                                 int cnt = 60;
@@ -593,26 +594,29 @@ class Analyze {
                         Collections.sort(balance);
                         double bl = 0;
                         for (Balance b : balance) {
-                            if (b.getAvailable() * bitcoinprice > 0.000000009d) {
-                                System.out.print("  " + b.getCurrency() + "\t" + dfcoins.format(b.getAvailable()));
-                                if (b.getCurrency().equals("BTC")) {
-                                    System.out.print("\t" + dfcoins.format(b.getAvailable()) + "\t$" + dfdollars.format(b.getAvailable() * bitcoinprice));
-                                    bittot += b.getAvailable();
-                                } else {
-                                    double coinshave = b.getAvailable();
-                                    double coinrate = tickerHM.get(b.getCurrency() + "_BTC").getBid();
-                                    double cointotal = coinrate * coinshave;
+                            try {
+                                if (b.getAvailable() * bitcoinprice > 0.000000009d) {
+                                    System.out.print("  " + b.getCurrency() + "\t" + dfcoins.format(b.getAvailable()));
+                                    if (b.getCurrency().equals("BTC")) {
+                                        System.out.print("\t" + dfcoins.format(b.getAvailable()) + "\t$" + dfdollars.format(b.getAvailable() * bitcoinprice));
+                                        bittot += b.getAvailable();
+                                    } else {
+                                        double coinshave = b.getAvailable();
+                                        double coinrate = tickerHM.get(b.getCurrency() + "_BTC").getBid();
+                                        double cointotal = coinrate * coinshave;
 
-                                    System.out.print("\t" + dfcoins.format(cointotal) + "\t$" + dfdollars.format(cointotal * bitcoinprice));
-                                    bittot += cointotal;
-                                    if (b.getCurrency().equals("BLEU")) {
-                                        bl = cointotal;
+                                        System.out.print("\t" + dfcoins.format(cointotal) + "\t$" + dfdollars.format(cointotal * bitcoinprice));
+                                        bittot += cointotal;
+                                        if (b.getCurrency().equals("BLEU")) {
+                                            bl = cointotal;
+                                        }
+
                                     }
 
+                                    System.out.println();
                                 }
-
-                                System.out.println();
                             }
+                            catch (Exception e2){e2.printStackTrace();}
                         }
                         System.out.println("  TOT-B" + "\t--------------\t" + dfcoins.format(bittot - bl) + "\t$" + dfdollars.format((bittot - bl) * bitcoinprice));
                         System.out.println("  TOT" + "\t--------------\t" + dfcoins.format(bittot) + "\t$" + dfdollars.format(bittot * bitcoinprice));
@@ -643,7 +647,7 @@ class Analyze {
                                 if (!hmquantity.containsKey(g)) hmquantity.put(g, 0d);
                                 double price = o.getPrice();
                                 double quant = o.getQuantity();
-                                hmtotal.put(g, hmtotal.get(g) + price*quant);
+                                hmtotal.put(g, hmtotal.get(g) + price * quant);
                                 hmquantity.put(g, hmquantity.get(g) + quant);
                                 break;
                             }
@@ -731,14 +735,14 @@ class Analyze {
                                 int cnt = 0;
                                 while (cnt++ < 10000000 && total * rate < 0.00000001d && total > 0.000000009d)
                                     total *= 1.1d;
-                                if (mk.getBaseCurrency().equals("BTC"))if (total * rate < 0.00001d) {
+                                if (mk.getBaseCurrency().equals("BTC")) if (total * rate < 0.00001d) {
 
                                     total = 0.00001d / rate;
                                 }
 
-                                if (mk.getBaseCurrency().equals("DOGE"))if (total * rate < 10d) {
+                                if (mk.getBaseCurrency().equals("DOGE")) if (total * rate < 10d) {
 
-                                    total = 10d/ rate;
+                                    total = 10d / rate;
                                 }
 
                                 total *= buyfactor;
@@ -780,15 +784,13 @@ class Analyze {
                                 double rate = tickerHM.get(mk.getMarketName()).getBid();
 //                                if (!mk.getBaseCurrency().equals("BTC"))
 //                                    rate *= tickerHM.get(mk.getBaseCurrency() + "_BTC").getAsk();
-                                double total = mk.getMinTradeSize()/rate;// / rate;
-                                if (mk.getBaseCurrency().equals("BTC"))if (total * rate < 0.00001d) {
-
+                                double total = mk.getMinTradeSize() / rate;// / rate;
+                                if (mk.getBaseCurrency().equals("BTC")) if (total * rate < 0.00001d) {
                                     total = 0.00001d / rate;
                                 }
 
-                                if (mk.getBaseCurrency().equals("DOGE"))if (total * rate < 10d) {
-
-                                    total = 10d/ rate;
+                                if (mk.getBaseCurrency().equals("DOGE")) if (total * rate < 10d) {
+                                    total = 10d / rate;
                                 }
 
 
