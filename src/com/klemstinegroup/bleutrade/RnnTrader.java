@@ -16,6 +16,7 @@ import java.util.*;
  */
 public class RnnTrader {
 
+    public static boolean debug;
     private double bitcoinprice;
     ArrayList<Currency> currencies = new ArrayList<Currency>();
     HashMap<String, Double> currencyCost = new HashMap<String, Double>();

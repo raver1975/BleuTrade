@@ -280,11 +280,11 @@ public class Http {
         JSONObject json = null;
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("market", market);
-        params.put("rate", Analyze.dfcoins.format(rate));
-        params.put("quantity", Analyze.dfcoins.format(quantity));
+        params.put("rate", RnnTrader.dfcoins.format(rate));
+        params.put("quantity", RnnTrader.dfcoins.format(quantity));
 //        params.put("comments", comments);
-        System.out.println("placing " + (buy ? "buy" : "sell") + " order:" + market + "\t" + Analyze.dfcoins.format(rate) + "\t#" + Analyze.dfcoins.format(quantity));
-        if (Analyze.debug) return 1;
+        System.out.println("placing " + (buy ? "buy" : "sell") + " order:" + market + "\t" + RnnTrader.dfcoins.format(rate) + "\t#" + RnnTrader.dfcoins.format(quantity));
+        if (RnnTrader.debug) return 1;
         try {
             if (buy) json = openPrivate("/market/buylimit", params);
             else json = openPrivate("/market/selllimit", params);
@@ -305,7 +305,7 @@ public class Http {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("orderid", Long.toString(id));
         System.out.println("canceling order " + id);
-        if (Analyze.debug) return true;
+        if (RnnTrader.debug) return true;
         try {
             json = openPrivate("/market/cancel", params);
         } catch (Exception e) {
