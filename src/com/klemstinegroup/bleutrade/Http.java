@@ -97,7 +97,7 @@ public class Http {
     public static JSONObject openPrivate(String url, Map<String, String> params) throws NoSuchAlgorithmException, InvalidKeyException, IOException {
         url = uri + url;
         if (params == null) params = new HashMap<String, String>();
-        params.put("apikey", Analyze.apikey);
+        params.put("apikey", RnnTrader.apikey);
 
         if (params.size() > 0) {
 
@@ -111,7 +111,7 @@ public class Http {
 
         Mac sha_HMAC = Mac.getInstance("HmacSHA512");
 
-        SecretKeySpec secret_key = new SecretKeySpec(Analyze.apisecret.getBytes(), "HmacSHA512");
+        SecretKeySpec secret_key = new SecretKeySpec(RnnTrader.apisecret.getBytes(), "HmacSHA512");
         sha_HMAC.init(secret_key);
 
         String hash = toHex(sha_HMAC.doFinal(url.getBytes()));
